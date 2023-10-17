@@ -132,40 +132,48 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <script>
-
+        // Function to handle the click event on the "show-login-reg" element
         $("#show-login-reg").click(function () {
             // Show the login/register popup
             $("#login-register-popup").show();
 
             // Handle the switch to register form
             $("#switch-to-register").click(function () {
+                // Hide the switch-to-register button and show the switch-to-login button
                 $("#switch-to-register").hide();
                 $("#switch-to-login").show();
+                // Hide the login form and show the register form
                 $("#login-form").hide();
                 $("#register-form").show();
             });
 
-            // Handle the switch back to login form
+            // Handle the switch back to the login form
             $("#switch-to-login").click(function () {
+                // Hide the switch-to-login button and show the switch-to-register button
                 $("#switch-to-login").hide();
-                $("#register-form").hide();
                 $("#switch-to-register").show();
+                // Hide the register form and show the login form
+                $("#register-form").hide();
                 $("#login-form").show();
             });
 
+            // Handle the switch to the forgot password form
             $("#switch-to-forgotpass").click(function () {
+                // Hide both the login and register forms
                 $("#login-form").hide();
                 $("#register-form").hide();
+                // Show the forgot password form
                 $("#forgotpassword-form").show();
+                // Show both the switch-to-register and switch-to-login buttons
                 $("#switch-to-register").show();
                 $("#switch-to-login").show();
-
             });
 
+            // Handle the click event to close the popup
             $("#close-popup").click(function () {
+                // Hide the login/register popup
                 $("#login-register-popup").hide();
             });
-
 
             // Handle file drop event for registration
             const fileInput = document.getElementById("customFile");
@@ -174,14 +182,13 @@
                 const file = event.dataTransfer.files[0];
                 if (file) {
                     // Handle the dropped file, e.g., validate and process it
-                    //alert("File dropped: " + file.name);
                     var label = document.querySelector('label[for="customFile"]');
-                    label.textContent = file.name;
-
+                    label.textContent = file.name; // Update the label with the file name
                 }
             });
         });
     </script>
+
 
 
     <!-- Add Bootstrap JS and jQuery for navbar functionality -->
