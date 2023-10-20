@@ -133,6 +133,21 @@
     <!-- Add Bootstrap JS and jQuery for popup functionality -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+
+    <!-- PHP Code -->
+    <?php
+    session_start();
+                    $servername = 'localhost';
+
+                    if (isset($_POST["login"]) && $_POST["login"] == "login") {
+                        $username =  $_POST["user_username"];
+                        $password = $_POST["user_password"];
+
+                        try {
+                            new PDO("mysql:host=$servername", $username, $password);
+                        } catch (PDOException $e) {}
+                    }
+   ?>
     <script>
         // Function to handle the click event on the "show-login-reg" element
         $("#show-login-reg").click(function () {
