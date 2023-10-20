@@ -8,7 +8,7 @@ const portnum = 3000;
 app.use(express.static(__dirname + '/images'));
 
 app.get("/", (req, res) => {
-    res.sendFile(`${__dirname}/index.html`);
+    res.sendFile(`${__dirname}/html/index.html`);
 });
 
 io.on("connection", (socket) => {
