@@ -65,8 +65,6 @@
         </div>
     </nav>
 
-
-
     <!-- Entry Page Content -->
     <div class="container">
         <center>
@@ -74,8 +72,6 @@
         </center>
         <p>This is the entry page content.</p>
     </div>
-
-
 
     <!-- Login/Register Popup -->
     <div id="login-register-popup">
@@ -141,13 +137,10 @@
         </div>
     </div>
 
-
-
     <!-- Add Bootstrap JS and jQuery for popup functionality -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <div>
-
         <!-- PHP Code -->
         <?php
         //session_start();
