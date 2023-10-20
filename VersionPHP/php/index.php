@@ -60,7 +60,6 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" id="show-login-reg">Login</a>
-
                 </li>
             </ul>
         </div>
@@ -87,11 +86,11 @@
             <form id="login-form" method="post">
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email-login" placeholder="Enter your email">
+                    <input type="email" class="form-control" id="email-login" placeholder="Enter your email" name="log_email">
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" class="form-control" id="password" placeholder="Enter your password">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password" name="log_password">
                 </div>
                 <input type="hidden" name="login" value="login">
                 <button type="submit" class="btn btn-primary" name="submit" value="login">Login</button>
@@ -99,11 +98,23 @@
             <form id="register-form" style="display: none;">
                 <div class="form-group">
                     <label for="email-register">Email:</label>
-                    <input type="email" class="form-control" id="email-register" placeholder="Enter your email">
+                    <input type="email" class="form-control" id="email-register" placeholder="Enter your email" name="reg_email">
                 </div>
                 <div class="form-group">
                     <label for="password-register">Password:</label>
-                    <input type="password" class="form-control" id="password-register" placeholder="Enter your password">
+                    <input type="password" class="form-control" id="password-register" placeholder="Enter your password" name="reg_password">
+                </div>
+                <div class="form-group">
+                    <label for="firstname-register">First Name:</label>
+                    <input type="firstname" class="form-control" id="firstname-register" placeholder="Enter your first name" name="reg_firstname">
+                </div>
+                <div class="form-group">
+                    <label for="surname-register">Surname:</label>
+                    <input type="surname" class="form-control" id="surname-register" placeholder="Enter your surname" name="reg_surname">
+                </div>
+                <div class="form-group">
+                    <label for="Address-register">Address:</label>
+                    <input type="Address" class="form-control" id="address-register" placeholder="Enter your address" name="reg_address">
                 </div>
                 <div class="form-group">
                     <label for="custom-file">Place your eid file here:</label>
@@ -135,21 +146,30 @@
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
     <div>
-    
+
         <!-- PHP Code -->
         <?php
         //session_start();
         $servername = 'localhost';
 
         if (isset($_POST["login"]) && $_POST["login"] == "login") {
-            echo "Hello";
+            try {
+                $Email = $_POST["log_email"];
+                $Password = $_POST["log_password"];
+                $conn = new PDO("mysql:host=$servername", "dbname=bdvaccances", "root", null);
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $stmt = $conn->query("SELECT * FROM t_person");
 
-            //     $username =  $_POST["user_username"];
-            //     $password = $_POST["user_password"];
-
-            //     try {
-            //         new PDO("mysql:host=$servername", $username, $password);
-            //     } catch (PDOException $e) {}
+                $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo '<pre>';
+                foreach ($res as $row) {
+                    if (($row['pEmail'] == $Email) && ($row['pPassword'] == $Password)) {
+                        echo 'login sucessful';
+                    }
+                }
+            } catch (PDOException $e) {
+                echo "<script>alert('Error: ' .". $e->getMessage()."');</script>";
+            }
         }
         ?>
     </div>
