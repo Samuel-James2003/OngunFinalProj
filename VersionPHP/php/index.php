@@ -72,7 +72,7 @@
     <!-- Entry Page Content -->
     <div class="container">
         <center>
-            <h1>Welcome to Your Website</h1>
+            <h1>Welcome to Our Website</h1>
         </center>
         <p>This is the entry page content.</p>
     </div>
