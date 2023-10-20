@@ -171,6 +171,18 @@
                 echo "<script>alert('Error: ' .". $e->getMessage()."');</script>";
             }
         }
+            if (isset($_POST["register"]) && $_POST["register"] == "register") {
+                try{
+                    if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_adress"]) && !empty($_POST["reg_email"])) {
+                        if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_adress"]) >= 15)) {
+                            if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
+                                $dbname="bdvacances";
+                                
+                        }
+                    }
+                }
+            }
+        }
         ?>
     </div>
     <script>
