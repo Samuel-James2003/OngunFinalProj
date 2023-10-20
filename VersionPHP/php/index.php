@@ -128,8 +128,8 @@
             </form>
             <form id="forgotpassword-form" style="display: none;" method="post">
                 <div class="form-group">
-                    <label for="email-register">Email:</label>
-                    <input type="email" class="form-control" id="email-register" placeholder="Enter your email">
+                    <label for="email-forgotpassword">Email:</label>
+                    <input type="email" class="form-control" id="email-forgotpassword" placeholder="Enter your email" name="for_email">
                 </div>
                 <input type="hidden" name="forgotpass" value="forgotpass">
                 <button type="submit" class="btn btn-warning" name="submit" value="forgotpass">Send new
@@ -168,7 +168,8 @@
                 $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
                 foreach ($res as $row) {
-                    if (($row['pEmail'] == $Email) && ($row['pPassword'] == $Password)) {
+
+                    if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
                         echo 'login sucessful';
                     }
                 }
@@ -182,14 +183,13 @@
                 //Ligne à erreur ... jsp pourquoi 
                 if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
                     try {
-                        echo "hello bitch";
                         $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
                         $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                        echo 'connexion réussie <br>';
                         $sql = "INSERT INTO t_person (pName, pSurname, pAddress, pPassword, pEmail) 
                             VALUES (?, ?, ?, ?, ?)";
                         $stmt = $conn->prepare($sql);
-                        $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $_POST["reg_password"], $_POST["reg_email"]]);
+                        $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
+                        $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $hashedString, $_POST["reg_email"]]);
                     } catch (PDOException $e) {
                         echo "Error: '" . $e->getMessage();
                     }
@@ -197,6 +197,29 @@
 
             //Il faut trouver une façon elegante d'afficher les erreurs
 
+        }
+
+        if (isset($_POST["forgotpass"]) && $_POST["forgotpass"] == "forgotpass") {
+            echo "hello";
+
+            try {
+                $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                $stmt = $conn->query("SELECT * FROM t_person");
+                $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach ($res as $row) {
+                    if ($row["pEmail"] == $_POST["for_email"]) {
+                        echo '<div class="alert alert-primary" role="alert">
+                         <h4 class="alert-heading">Email sent</h4>
+                         <p>Email sent to '.$_POST["for_email"].'</p>
+                         <hr>
+                       </div>';
+                    }
+                }
+            } catch (PDOException $e) {
+                echo "Error: '" . $e->getMessage();
+            }
         }
 
         ?>
