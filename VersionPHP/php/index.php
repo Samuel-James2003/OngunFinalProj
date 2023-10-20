@@ -47,7 +47,8 @@
     <!-- Navbar for both pages -->
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">Menu</a>
-        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <div class="collapse navbar-collapse" id="navbarNav">
@@ -86,11 +87,13 @@
             <form id="login-form" method="post">
                 <div class="form-group">
                     <label for="email">Email:</label>
-                    <input type="email" class="form-control" id="email-login" placeholder="Enter your email" name="log_email">
+                    <input type="email" class="form-control" id="email-login" placeholder="Enter your email"
+                        name="log_email">
                 </div>
                 <div class="form-group">
                     <label for="password">Password:</label>
-                    <input type="password" class="form-control" id="password" placeholder="Enter your password" name="log_password">
+                    <input type="password" class="form-control" id="password" placeholder="Enter your password"
+                        name="log_password">
                 </div>
                 <input type="hidden" name="login" value="login">
                 <button type="submit" class="btn btn-primary" name="submit" value="login">Login</button>
@@ -98,23 +101,28 @@
             <form id="register-form" style="display: none;">
                 <div class="form-group">
                     <label for="email-register">Email:</label>
-                    <input type="email" class="form-control" id="email-register" placeholder="Enter your email" name="reg_email">
+                    <input type="email" class="form-control" id="email-register" placeholder="Enter your email"
+                        name="reg_email">
                 </div>
                 <div class="form-group">
                     <label for="password-register">Password:</label>
-                    <input type="password" class="form-control" id="password-register" placeholder="Enter your password" name="reg_password">
+                    <input type="password" class="form-control" id="password-register" placeholder="Enter your password"
+                        name="reg_password">
                 </div>
                 <div class="form-group">
                     <label for="firstname-register">First Name:</label>
-                    <input type="firstname" class="form-control" id="firstname-register" placeholder="Enter your first name" name="reg_firstname">
+                    <input type="firstname" class="form-control" id="firstname-register"
+                        placeholder="Enter your first name" name="reg_firstname">
                 </div>
                 <div class="form-group">
                     <label for="surname-register">Surname:</label>
-                    <input type="surname" class="form-control" id="surname-register" placeholder="Enter your surname" name="reg_surname">
+                    <input type="surname" class="form-control" id="surname-register" placeholder="Enter your surname"
+                        name="reg_surname">
                 </div>
                 <div class="form-group">
                     <label for="Address-register">Address:</label>
-                    <input type="Address" class="form-control" id="address-register" placeholder="Enter your address" name="reg_address">
+                    <input type="Address" class="form-control" id="address-register" placeholder="Enter your address"
+                        name="reg_address">
                 </div>
                 <div class="form-group">
                     <label for="custom-file">Place your eid file here:</label>
@@ -132,7 +140,8 @@
                     <input type="email" class="form-control" id="email-register" placeholder="Enter your email">
                 </div>
                 <input type="hidden" name="forgotpass" value="forgotpass">
-                <button type="submit" class="btn btn-warning" name="submit" value="forgotpass">Send new password</button>
+                <button type="submit" class="btn btn-warning" name="submit" value="forgotpass">Send new
+                    password</button>
             </form>
             <button id="switch-to-register" class="btn btn-link">Switch to Register</button>
             <button id="switch-to-login" class="btn btn-link" style="display: none;">Switch to Login</button>
@@ -168,35 +177,43 @@
                     }
                 }
             } catch (PDOException $e) {
-                echo "<script>alert('Error: ' .". $e->getMessage()."');</script>";
+                echo "<script>alert('Error: ' ." . $e->getMessage() . "');</script>";
             }
         }
-            if (isset($_POST["register"]) && $_POST["register"] == "register") {
-                try{
-                    if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_adress"]) && !empty($_POST["reg_email"])) {
-                        if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_adress"]) >= 15)) {
-                            if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
-                                $dbname="bdvacances";
-                                
+        if (isset($_POST["register"]) && $_POST["register"] == "register") {
+            if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_adress"]) && !empty($_POST["reg_email"])) {
+                if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_adress"]) >= 15)) {
+                    if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
+                        $servername='localhost';
+                        $dbname = "bdvacances";
+                        $username='root';
+                        $password='';
+                        try {
+                            $conn= new PDO("mysql:host=$servername;dbname=$dbname",$username ,$password);
+                            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                            echo 'connexion réussie <br>';
+                            $sql ="INSERT INTO formulaire (pName, pSurname, pAddress, pPassword, pEmail) 
+                            VALUES (?, ?, ?, ?, ?)";
+                            $stmt = $conn->prepare($sql);
+                            $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $_POST["reg_password"], $_POST["reg_mail"]]);
+                        } catch (PDOException $e) {
+                            echo "<script>alert('Error: ' ." . $e->getMessage() . "');</script>";
                         }
                     }
                 }
             }
-            catch (PDOException $e) {
-             echo "<script>alert('Error: ' .". $e->getMessage()."');</script>";
-            }
         }
-        
+
         ?>
     </div>
     <script>
         // Function to handle the click event on the "show-login-reg" element
-        $("#show-login-reg").click(function() {
+        $("#show-login-reg").click(function () {
             // Show the login/register popup
             $("#login-register-popup").show();
 
             // Handle the switch to register form
-            $("#switch-to-register").click(function() {
+            $("#switch-to-register").click(function () {
                 // Hide the switch-to-register button and show the switch-to-login button
                 $("#switch-to-register").hide();
                 $("#switch-to-login").show();
@@ -206,7 +223,7 @@
             });
 
             // Handle the switch back to the login form
-            $("#switch-to-login").click(function() {
+            $("#switch-to-login").click(function () {
                 // Hide the switch-to-login button and show the switch-to-register button
                 $("#switch-to-login").hide();
                 $("#switch-to-register").show();
@@ -216,7 +233,7 @@
             });
 
             // Handle the switch to the forgot password form
-            $("#switch-to-forgotpass").click(function() {
+            $("#switch-to-forgotpass").click(function () {
                 // Hide both the login and register forms
                 $("#login-form").hide();
                 $("#register-form").hide();
@@ -228,14 +245,14 @@
             });
 
             // Handle the click event to close the popup
-            $("#close-popup").click(function() {
+            $("#close-popup").click(function () {
                 // Hide the login/register popup
                 $("#login-register-popup").hide();
             });
 
             // Handle file drop event for registration
             const fileInput = document.getElementById("customFile");
-            fileInput.addEventListener("drop", function(event) {
+            fileInput.addEventListener("drop", function (event) {
                 event.preventDefault();
                 const file = event.dataTransfer.files[0];
                 if (file) {
