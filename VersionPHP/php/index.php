@@ -182,7 +182,11 @@
                     }
                 }
             }
+            catch (PDOException $e) {
+             echo "<script>alert('Error: ' .". $e->getMessage()."');</script>";
+            }
         }
+        
         ?>
     </div>
     <script>
