@@ -95,7 +95,7 @@
                 <input type="hidden" name="login" value="login">
                 <button type="submit" class="btn btn-primary" name="submit" value="login">Login</button>
             </form>
-            <form id="register-form" style="display: none;">
+            <form id="register-form" style="display: none;" method="post">
                 <div class="form-group">
                     <label for="email-register">Email:</label>
                     <input type="email" class="form-control" id="email-register" placeholder="Enter your email" name="reg_email">
@@ -124,9 +124,9 @@
                     </div>
                 </div>
                 <input type="hidden" name="register" value="register">
-                <button type="submit" class="btn btn-success" name="register    " value="register">Register</button>
+                <button type="submit" class="btn btn-success" name="register" value="register">Register</button>
             </form>
-            <form id="forgotpassword-form" style="display: none;">
+            <form id="forgotpassword-form" style="display: none;" method="post">
                 <div class="form-group">
                     <label for="email-register">Email:</label>
                     <input type="email" class="form-control" id="email-register" placeholder="Enter your email">
@@ -152,7 +152,7 @@
         <?php
         //session_start();
         $servername = 'localhost';
-        $dbname = "bdvaccances";
+        $dbname = "bdvacances";
         $username = 'root';
         $pass = '';
         if (isset($_POST["login"]) && $_POST["login"] == "login") {
@@ -177,24 +177,26 @@
             }
         }
         if (isset($_POST["register"]) && $_POST["register"] == "register") {
-            echo "hello bitch";
-            if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_adress"]) && !empty($_POST["reg_email"])) {
-                if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_adress"]) >= 15)) {
-                    if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
-                        try {
-                            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
-                            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                            echo 'connexion réussie <br>';
-                            $sql = "INSERT INTO t_person (pName, pSurname, pAddress, pPassword, pEmail) 
+            if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_address"]) && !empty($_POST["reg_email"]))
+                // if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_address"]) >= 15)) {
+                //Ligne à erreur ... jsp pourquoi 
+                if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
+                    try {
+                        echo "hello bitch";
+                        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        echo 'connexion réussie <br>';
+                        $sql = "INSERT INTO t_person (pName, pSurname, pAddress, pPassword, pEmail) 
                             VALUES (?, ?, ?, ?, ?)";
-                            $stmt = $conn->prepare($sql);
-                            $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $_POST["reg_password"], $_POST["reg_mail"]]);
-                        } catch (PDOException $e) {
-                            echo "Error: '" . $e->getMessage();
-                        }
+                        $stmt = $conn->prepare($sql);
+                        $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $_POST["reg_password"], $_POST["reg_email"]]);
+                    } catch (PDOException $e) {
+                        echo "Error: '" . $e->getMessage();
                     }
                 }
-            }
+
+            //Il faut trouver une façon elegante d'afficher les erreurs
+
         }
 
         ?>
