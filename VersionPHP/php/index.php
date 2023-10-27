@@ -171,8 +171,8 @@
             }
         }
         if (isset($_POST["register"]) && $_POST["register"] == "register") {
-            if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_address"]) && !empty($_POST["reg_email"]))
-                // if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_address"]) >= 15)) {
+            if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_address"]) && !empty($_POST["reg_email"])){
+                 if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_address"]) >= 8)) {
                 //Ligne à erreur ... jsp pourquoi 
                 if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
                     try {
@@ -183,13 +183,21 @@
                         $stmt = $conn->prepare($sql);
                         $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
                         $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $hashedString, $_POST["reg_email"]]);
-                    } catch (PDOException $e) {
-                        echo "Error: '" . $e->getMessage();
+                        } catch (PDOException $e) {
+                            echo "Error: '" . $e->getMessage();
+                        }
+                    }
+                    else {
+                        echo "Invalid email address. <br>";
                     }
                 }
-
-            //Il faut trouver une façon elegante d'afficher les erreurs
-
+                else {
+                    echo "Not enough character, Password min 8 characters, firstname min 2 characters and address min 8 characters <br>";
+                }
+            }
+            else {
+                echo "Missing field. <br>";
+            }
         }
 
         if (isset($_POST["forgotpass"]) && $_POST["forgotpass"] == "forgotpass") {
