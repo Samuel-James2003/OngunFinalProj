@@ -6,25 +6,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Login and Register</title>
-    <!-- Add your styles here -->
-
+    <style>
+        .error {
+            border: 2px solid red;
+        }
+    </style>
 </head>
 
 <body>
-
+    <div>
+        <?php
+        require 'ReadID.php';
+        $servername = 'localhost';
+        $dbname = "bdvacances";
+        $username = 'root';
+        $pass = '';
+        $loggedin = 0;
+        $userInput = '';
+        $error = '';
+        function function_alert($message)
+        {
+            echo "<script>alert('$message');</script>";
+        }
+        if ($loggedin == 1) {
+            $error = 'style="border:2px solid red" ';
+        }
+        ?>
+    </div>
     <!-- Registration and Login Forms -->
     <div class="container-sm">
         <h2>Login or Register</h2>
 
         <!-- Login Form -->
-        <form id="login-form" method="post">
+        <form id="login-form" method="post" class="needs-validation" novalidate>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email-login" placeholder="Enter your email" name="log_email">
+                <input type="email" class="form-control" id="email-login" placeholder="Enter your email" name="log_email" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Input an email address
+                </div>
+
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" class="form-control" id="password" placeholder="Enter your password" name="log_password">
+                <input type="password" class="form-control" id="password" placeholder="Enter your password" name="log_password" required>
+                <div class="valid-feedback">
+                    Looks good!
+                </div>
+                <div class="invalid-feedback">
+                    Input a password
+                </div>
             </div>
             <input type="hidden" name="login" value="login">
             <button type="submit" class="btn btn-primary" name="submit" value="login">Login</button>
@@ -34,7 +68,6 @@
         <form id="register-form" method="post" style="display: none;">
             <div class="form-group">
                 <label for="email-register">Email:</label>
-                
                 <input type="email" class="form-control" id="email-register" placeholder="Enter your email" name="reg_email">
             </div>
             <div class="form-group">
@@ -82,102 +115,105 @@
     </div>
     <div>
         <!-- PHP Code -->
-        <?php
-        require 'ReadID.php';
-        $servername = 'localhost';
-        $dbname = "bdvacances";
-        $username = 'root';
-        $pass = '';
-        function function_alert($message)
-        {
-            echo "<script>alert('$message');</script>";
-        }
-        ?>
-        <?php
-        if (isset($_POST["login"]) && $_POST["login"] == "login") {
-            //todo : condtions if details not filled (probably could use existing details and have an external funtion)
-            try {
-                $Email = $_POST["log_email"];
-                $Password = $_POST["log_password"];
-                $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+        <div>
+            <?php
+            if (isset($_POST["login"]) && $_POST["login"] == "login") {
+                try {
+                    $Email = $_POST["log_email"];
+                    $Password = $_POST["log_password"];
+                    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
 
-                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $stmt = $conn->query("SELECT * FROM t_person");
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $stmt = $conn->query("SELECT * FROM t_person");
 
-                $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                $loggedin = false;
-                foreach ($res as $row) {
-                    if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
-                        //
-                        $loggedin = true;
-                        break;
+                    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                    foreach ($res as $row) {
+                        if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
+                            //
+                            $loggedin = 2;
+                            break;
+                        }
                     }
+                    if ($loggedin == 0) {
+                        $loggedin == 1;
+                    }
+                } catch (PDOException $e) {
+                    echo "Error: '" . $e->getMessage();
                 }
-            } catch (PDOException $e) {
-                echo "Error: '" . $e->getMessage();
             }
-        }
-        ?>
-        <?php
-        if ($loggedin) {
-            //why does it refresh the page aggghhh
-            function_alert("You are logged in ");
-        }
-        ?>
-        <?php
-        if (isset($_POST["register"]) && $_POST["register"] == "register") {
-            if (!$_FILES['customFile']['error'] == 4 && !($_FILES['customFile']['size'] == 0 && !$_FILES['customFile']['error'] == 0)) {
-                $fileinfo = extractDataFromFile($_FILES['customFile']['name']);
-                //todo :  have the details fill out the files or have it disable the fields that it will already fill out 
+            ?>
+        </div>
+        <div>
+            <?php
+            if ($loggedin) {
+                //why does it refresh the page aggghhh
+                function_alert("You are logged in ");
             }
-            if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_address"]) && !empty($_POST["reg_email"])) {
-                if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_address"]) >= 8)) {
-                    //Ligne à erreur ... jsp pourquoi 
-                    if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
-                        try {
-                            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
-                            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                            $sql = "INSERT INTO t_person (pName, pSurname, pAddress, pPassword, pEmail) 
+            ?>
+        </div>
+        <div>
+            <?php
+            if (isset($_POST["register"]) && $_POST["register"] == "register") {
+                try{
+                if (!$_FILES['customFile']['error'] == 4 && !($_FILES['customFile']['size'] == 0 && !$_FILES['customFile']['error'] == 0)) {
+                    $fileinfo = extractDataFromFile($_FILES['customFile']['name']);
+                    //todo :  have the details fill out the files or have it disable the fields that it will already fill out 
+                }}
+                catch(Exception $e)
+                //no file nbd
+                {}
+                if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_address"]) && !empty($_POST["reg_email"])) {
+                    if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_address"]) >= 8)) {
+                        
+                        if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
+                            try {
+                                $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+                                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                                $sql = "INSERT INTO t_person (pName, pSurname, pAddress, pPassword, pEmail) 
                             VALUES (?, ?, ?, ?, ?)";
-                            $stmt = $conn->prepare($sql);
-                            $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
-                            $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $hashedString, $_POST["reg_email"]]);
-                        } catch (PDOException $e) {
-                            echo "Error: '" . $e->getMessage();
+                                $stmt = $conn->prepare($sql);
+                                $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
+                                $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $hashedString, $_POST["reg_email"]]);
+                            } catch (PDOException $e) {
+                                echo "Error: '" . $e->getMessage();
+                            }
+                        } else {
+                            echo "Invalid email address. <br>";
                         }
                     } else {
-                        echo "Invalid email address. <br>";
+                        echo "Not enough character, Password min 8 characters, firstname min 2 characters and address min 8 characters <br>";
                     }
                 } else {
-                    echo "Not enough character, Password min 8 characters, firstname min 2 characters and address min 8 characters <br>";
+                    echo "Missing field. <br>";
                 }
-            } else {
-                echo "Missing field. <br>";
             }
-        }
-        ?>
-        <?php
-        if (isset($_POST["forgotpass"]) && $_POST["forgotpass"] == "forgotpass") {
-            try {
-                $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
-                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                $stmt = $conn->query("SELECT * FROM t_person");
-                $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            ?>
+        </div>
+        <div>
+            <?php
+            if (isset($_POST["forgotpass"]) && $_POST["forgotpass"] == "forgotpass") {
+                try {
+                    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $stmt = $conn->query("SELECT * FROM t_person");
+                    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-                foreach ($res as $row) {
-                    if ($row["pEmail"] == $_POST["for_email"]) {
-                        echo '<div class="alert alert-primary" role="alert">
+                    foreach ($res as $row) {
+                        if ($row["pEmail"] == $_POST["for_email"]) {
+                            echo '<div class="alert alert-primary" role="alert">
                          <h4 class="alert-heading">Email sent</h4>
                          <p>Email sent to ' . $_POST["for_email"] . '</p>
                          <hr>
                        </div>';
+                        }
                     }
+                } catch (PDOException $e) {
+                    echo "Error: '" . $e->getMessage();
                 }
-            } catch (PDOException $e) {
-                echo "Error: '" . $e->getMessage();
             }
-        }
-        ?>
+            ?>
+        </div>
     </div>
 
     <!-- Add Bootstrap JS and jQuery if needed -->
@@ -221,8 +257,7 @@
                 $("#switch-to-login").show();
             });
         });
-    </script>
-    <script>
+
         // Handle file drop event for registration
         const fileInput = document.getElementById("customFile");
         fileInput.addEventListener("drop", function(event) {
@@ -234,8 +269,31 @@
                 label.textContent = file.name; // Update the label with the file name
             }
         });
+
+        function changeColor() {
+            var textbox = document.getElementById('myTextbox');
+            // Change the color to default (remove error class) on every input
+            textbox.classList.remove('error');
+        }
+        (function() {
+            'use strict';
+            window.addEventListener('load', function() {
+                // Fetch all the forms we want to apply custom Bootstrap validation styles to
+                var forms = document.getElementsByClassName('needs-validation');
+                // Loop over them and prevent submission
+                var validation = Array.prototype.filter.call(forms, function(form) {
+                    form.addEventListener('submit', function(event) {
+                        if (form.checkValidity() === false) {
+                            event.preventDefault();
+                            event.stopPropagation();
+                        }
+                        form.classList.add('was-validated');
+                    }, false);
+                });
+            }, false);
+        })();
     </script>
-    </script>
+
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
 </body>
