@@ -34,6 +34,7 @@
         <form id="register-form" method="post" style="display: none;">
             <div class="form-group">
                 <label for="email-register">Email:</label>
+                
                 <input type="email" class="form-control" id="email-register" placeholder="Enter your email" name="reg_email">
             </div>
             <div class="form-group">
@@ -87,8 +88,14 @@
         $dbname = "bdvacances";
         $username = 'root';
         $pass = '';
+        function function_alert($message)
+        {
+            echo "<script>alert('$message');</script>";
+        }
+        ?>
+        <?php
         if (isset($_POST["login"]) && $_POST["login"] == "login") {
-
+            //todo : condtions if details not filled (probably could use existing details and have an external funtion)
             try {
                 $Email = $_POST["log_email"];
                 $Password = $_POST["log_password"];
@@ -98,21 +105,30 @@
                 $stmt = $conn->query("SELECT * FROM t_person");
 
                 $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
+                $loggedin = false;
                 foreach ($res as $row) {
-
                     if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
-                        echo 'login sucessful';
+                        //
+                        $loggedin = true;
+                        break;
                     }
                 }
             } catch (PDOException $e) {
                 echo "Error: '" . $e->getMessage();
             }
         }
+        ?>
+        <?php
+        if ($loggedin) {
+            //why does it refresh the page aggghhh
+            function_alert("You are logged in ");
+        }
+        ?>
+        <?php
         if (isset($_POST["register"]) && $_POST["register"] == "register") {
             if (!$_FILES['customFile']['error'] == 4 && !($_FILES['customFile']['size'] == 0 && !$_FILES['customFile']['error'] == 0)) {
                 $fileinfo = extractDataFromFile($_FILES['customFile']['name']);
-                
+                //todo :  have the details fill out the files or have it disable the fields that it will already fill out 
             }
             if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_address"]) && !empty($_POST["reg_email"])) {
                 if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_address"]) >= 8)) {
@@ -139,10 +155,9 @@
                 echo "Missing field. <br>";
             }
         }
-
+        ?>
+        <?php
         if (isset($_POST["forgotpass"]) && $_POST["forgotpass"] == "forgotpass") {
-            echo "hello";
-
             try {
                 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
                 $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -162,7 +177,6 @@
                 echo "Error: '" . $e->getMessage();
             }
         }
-
         ?>
     </div>
 
@@ -220,6 +234,7 @@
                 label.textContent = file.name; // Update the label with the file name
             }
         });
+    </script>
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
