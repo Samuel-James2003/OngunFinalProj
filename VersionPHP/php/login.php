@@ -155,17 +155,16 @@
         <div>
             <?php
             if (isset($_POST["register"]) && $_POST["register"] == "register") {
-                try{
-                if (!$_FILES['customFile']['error'] == 4 && !($_FILES['customFile']['size'] == 0 && !$_FILES['customFile']['error'] == 0)) {
-                    $fileinfo = extractDataFromFile($_FILES['customFile']['name']);
-                    //todo :  have the details fill out the files or have it disable the fields that it will already fill out 
-                }}
-                catch(Exception $e)
-                //no file nbd
-                {}
+                try {
+                    if (!$_FILES['customFile']['error'] == 4 && !($_FILES['customFile']['size'] == 0 && !$_FILES['customFile']['error'] == 0)) {
+                        $fileinfo = extractDataFromFile($_FILES['customFile']['name']);
+                        //todo :  have the details fill out the files or have it disable the fields that it will already fill out 
+                    }
+                } catch (Exception) {
+                }
                 if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_address"]) && !empty($_POST["reg_email"])) {
                     if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_address"]) >= 8)) {
-                        
+
                         if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
                             try {
                                 $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
