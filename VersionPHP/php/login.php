@@ -17,6 +17,7 @@
     <div>
         <?php
         require 'ReadID.php';
+        require 'Alerts.php';
         $servername = 'localhost';
         $dbname = "bdvacances";
         $username = 'root';
@@ -24,20 +25,7 @@
         $loggedin = 0;
         $userInput = '';
         $error = '';
-        function function_alert($message)
-        {
-            echo "<script>alert('$message');</script>";
-        }
-        function Bootstrap_alert($strong, $message)
-        {
-            echo ' <div
-                class="alert alert-primary"
-                role="alert"
-            >
-                <strong>' . $strong . '</strong> ' . $message . '
-            </div>
-            ';
-        }
+        
         function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo)
         {
             if ($fileinfo != null && !empty($password) && !empty($mail) && strlen($password) >= 8) {
@@ -48,7 +36,7 @@
             )
                 return true;
             else {
-                Bootstrap_alert("Error", "Missing feild or not enough characters");
+                Bootstrap_alert("danger","Error", "Missing feild or not enough characters");
                 return false;
             }
         }
@@ -131,7 +119,7 @@
             <input type="hidden" name="register" value="register">
             <button type="submit" class="btn btn-success" name="register" value="register">Register</button>
         </form>
-        
+
         <!-- Forgot Password Form -->
         <form id="forgotpassword-form" method="post" style="display: none;">
             <div class="form-group">
@@ -174,7 +162,7 @@
                         $loggedin == 1;
                     }
                 } catch (PDOException $e) {
-                    Bootstrap_alert("Error", $e->getMessage());
+                    Bootstrap_alert("danger","Error", $e->getMessage());
                 }
             }
             ?>
@@ -183,7 +171,7 @@
             <?php
             if ($loggedin) {
                 //why does it refresh the page aggghhh
-                function_alert("You are logged in ");
+                Javascript_alert("You are logged in ");
             }
             ?>
         </div>
@@ -197,11 +185,11 @@
                         $fileinfo = extractDataFromFile($_FILES['customFile']['tmp_name']);
                         if (!$fileinfo) {
                             $fileinfo = null;
-                            Bootstrap_alert("Error", "File not found");
+                            Bootstrap_alert("danger","Error", "File not found");
                         }
                     }
                 } catch (Exception $e) {
-                    Bootstrap_alert("Error", $e->getMessage());
+                    Bootstrap_alert("danger","Error", $e->getMessage());
                 }
                 if (ValidateEntry(
                     $_POST["reg_password"],
@@ -225,10 +213,10 @@
                                 $stmt->execute([$fileinfo["firstname"], $fileinfo["name"], $fileinfo["streetandnumber"], $hashedString, $_POST["reg_email"]]);
                             }
                         } catch (PDOException $e) {
-                            Bootstrap_alert("Error", $e->getMessage());
+                            Bootstrap_alert("danger","Error", $e->getMessage());
                         }
                     } else {
-                        Bootstrap_alert("Error", "Invalid email address");
+                        Bootstrap_alert("danger","Error", "Invalid email address");
                     }
                 }
             }
@@ -255,7 +243,7 @@
                         }
                     }
                 } catch (PDOException $e) {
-                    Bootstrap_alert("Error", $e->getMessage());
+                    Bootstrap_alert("danger","Error", $e->getMessage());
                 }
             }
             ?>
