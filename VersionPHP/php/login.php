@@ -28,12 +28,36 @@
         {
             echo "<script>alert('$message');</script>";
         }
+        function Bootstrap_alert($strong, $message)
+        {
+            echo ' <div
+                class="alert alert-primary"
+                role="alert"
+            >
+                <strong>' . $strong . '</strong> ' . $message . '
+            </div>
+            ';
+        }
+        function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo)
+        {
+            if ($fileinfo != null && !empty($password) && !empty($mail) && strlen($password) >= 8) {
+                return true;
+            } elseif (
+                !empty($password) && !empty($firstname) && !empty($surname) && !empty($address) && !empty($mail) && strlen($firstname) >= 2
+                && strlen($address) >= 8 && strlen($password) >= 8
+            )
+                return true;
+            else {
+                Bootstrap_alert("Error", "Missing feild or not enough characters");
+                return false;
+            }
+        }
         if ($loggedin == 1) {
             $error = 'style="border:2px solid red" ';
         }
         ?>
     </div>
-    <!-- Registration and Login Forms -->
+    <!-- Registration, Login and Forgot password Forms -->
     <div class="container-sm">
         <h2>Login or Register</h2>
 
@@ -65,38 +89,49 @@
         </form>
 
         <!-- Registration Form -->
-        <form id="register-form" method="post" style="display: none;">
-            <div class="form-group">
-                <label for="email-register">Email:</label>
-                <input type="email" class="form-control" id="email-register" placeholder="Enter your email" name="reg_email">
-            </div>
-            <div class="form-group">
-                <label for="password-register">Password:</label>
-                <input type="password" class="form-control" id="password-register" placeholder="Enter your password" name="reg_password">
-            </div>
-            <div class="form-group">
-                <label for="firstname-register">First Name:</label>
-                <input type="firstname" class="form-control" id="firstname-register" placeholder="Enter your first name" name="reg_firstname">
-            </div>
-            <div class="form-group">
-                <label for="surname-register">Surname:</label>
-                <input type="surname" class="form-control" id="surname-register" placeholder="Enter your surname" name="reg_surname">
-            </div>
-            <div class="form-group">
-                <label for="Address-register">Address:</label>
-                <input type="Address" class="form-control" id="address-register" placeholder="Enter your address" name="reg_address">
-            </div>
-            <div class="form-group">
-                <label for="custom-file">Place your eid file here:</label>
-                <div class="custom-file">
-                    <input type="file" class="custom-file-input" id="customFile" accept=".eid">
-                    <label class="custom-file-label" for="customFile">Choose file</label>
+        <form id="register-form" method="post" enctype="multipart/form-data" style="display: none;" novalidate>
+            <div class="row g-3">
+                <div class="col-12">
+                    <div class="form-group">
+                        <label for="email-register">Email: *</label>
+                        <input type="email" class="form-control" id="email-register" placeholder="Enter your email" name="reg_email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password-register">Password: *</label>
+                        <input type="password" class="form-control" id="password-register" placeholder="Enter your password" name="reg_password" required>
+                    </div>
+                </div>
+                <!-- Left Column -->
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label for="firstname-register">First Name:</label>
+                        <input type="firstname" class="form-control" id="firstname-register" placeholder="Enter your first name" name="reg_firstname">
+                    </div>
+                    <div class="form-group">
+                        <label for="surname-register">Surname:</label>
+                        <input type="surname" class="form-control" id="surname-register" placeholder="Enter your surname" name="reg_surname">
+                    </div>
+                    <div class="form-group">
+                        <label for="Address-register">Address:</label>
+                        <input type="Address" class="form-control" id="address-register" placeholder="Enter your address" name="reg_address">
+                    </div>
+                </div>
+                <!-- Vertical Line -->
+                <div class="col-md-1" style="border-right: 1px solid #ccc; height: 100%;"></div>
+                <!-- Right Column -->
+                <div class="col-md-5">
+                    <div class="form-group">
+                        <label for="custom-file">Place your eid file here:</label>
+                        <div class="custom-file">
+                            <input type="file" class="form-control-file" name="customFile" id="customFile" accept=".eid">
+                        </div>
+                    </div>
                 </div>
             </div>
             <input type="hidden" name="register" value="register">
             <button type="submit" class="btn btn-success" name="register" value="register">Register</button>
         </form>
-
+        
         <!-- Forgot Password Form -->
         <form id="forgotpassword-form" method="post" style="display: none;">
             <div class="form-group">
@@ -114,7 +149,7 @@
         <button id="switch-to-forgotpass" class="btn btn-link">I forgot my password</button>
     </div>
     <div>
-        <!-- PHP Code -->
+        <!--Login PHP-->
         <div>
             <?php
             if (isset($_POST["login"]) && $_POST["login"] == "login") {
@@ -139,7 +174,7 @@
                         $loggedin == 1;
                     }
                 } catch (PDOException $e) {
-                    echo "Error: '" . $e->getMessage();
+                    Bootstrap_alert("Error", $e->getMessage());
                 }
             }
             ?>
@@ -152,43 +187,55 @@
             }
             ?>
         </div>
+        <!--Register PHP-->
         <div>
             <?php
             if (isset($_POST["register"]) && $_POST["register"] == "register") {
+                $fileinfo = null;
                 try {
-                    if (!$_FILES['customFile']['error'] == 4 && !($_FILES['customFile']['size'] == 0 && !$_FILES['customFile']['error'] == 0)) {
-                        $fileinfo = extractDataFromFile($_FILES['customFile']['name']);
-                        //todo :  have the details fill out the files or have it disable the fields that it will already fill out 
+                    if ($_FILES['customFile']['error'] != 4 && !($_FILES['customFile']['size'] == 0 && $_FILES['customFile']['error'] == 0)) {
+                        $fileinfo = extractDataFromFile($_FILES['customFile']['tmp_name']);
+                        if (!$fileinfo) {
+                            $fileinfo = null;
+                            Bootstrap_alert("Error", "File not found");
+                        }
                     }
-                } catch (Exception) {
+                } catch (Exception $e) {
+                    Bootstrap_alert("Error", $e->getMessage());
                 }
-                if (!empty($_POST["reg_password"]) && !empty($_POST["reg_firstname"]) && !empty($_POST["reg_surname"]) && !empty($_POST["reg_address"]) && !empty($_POST["reg_email"])) {
-                    if ((strlen($_POST["reg_password"]) >= 8) && (strlen($_POST["reg_firstname"]) >= 2) && (strlen($_POST["reg_address"]) >= 8)) {
-
-                        if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
-                            try {
-                                $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
-                                $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                                $sql = "INSERT INTO t_person (pName, pSurname, pAddress, pPassword, pEmail) 
+                if (ValidateEntry(
+                    $_POST["reg_password"],
+                    $_POST["reg_firstname"],
+                    $_POST["reg_surname"],
+                    $_POST["reg_address"],
+                    $_POST["reg_email"],
+                    $fileinfo
+                )) {
+                    if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
+                        try {
+                            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+                            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                            $sql = "INSERT INTO t_person (pName, pSurname, pAddress, pPassword, pEmail) 
                             VALUES (?, ?, ?, ?, ?)";
-                                $stmt = $conn->prepare($sql);
-                                $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
+                            $stmt = $conn->prepare($sql);
+                            $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
+                            if ($fileinfo == null) {
                                 $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $hashedString, $_POST["reg_email"]]);
-                            } catch (PDOException $e) {
-                                echo "Error: '" . $e->getMessage();
+                            } else {
+                                $stmt->execute([$fileinfo["firstname"], $fileinfo["name"], $fileinfo["streetandnumber"], $hashedString, $_POST["reg_email"]]);
                             }
-                        } else {
-                            echo "Invalid email address. <br>";
+                        } catch (PDOException $e) {
+                            Bootstrap_alert("Error", $e->getMessage());
                         }
                     } else {
-                        echo "Not enough character, Password min 8 characters, firstname min 2 characters and address min 8 characters <br>";
+                        Bootstrap_alert("Error", "Invalid email address");
                     }
-                } else {
-                    echo "Missing field. <br>";
                 }
             }
+
             ?>
         </div>
+        <!--Forgot password PHP-->
         <div>
             <?php
             if (isset($_POST["forgotpass"]) && $_POST["forgotpass"] == "forgotpass") {
@@ -208,7 +255,7 @@
                         }
                     }
                 } catch (PDOException $e) {
-                    echo "Error: '" . $e->getMessage();
+                    Bootstrap_alert("Error", $e->getMessage());
                 }
             }
             ?>
@@ -260,7 +307,6 @@
         // Handle file drop event for registration
         const fileInput = document.getElementById("customFile");
         fileInput.addEventListener("drop", function(event) {
-            event.preventDefault();
             const file = event.dataTransfer.files[0];
             if (file) {
                 // Handle the dropped file, e.g., validate and process it
