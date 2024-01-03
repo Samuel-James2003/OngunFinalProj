@@ -235,11 +235,7 @@
 
                     foreach ($res as $row) {
                         if ($row["pEmail"] == $_POST["for_email"]) {
-                            echo '<div class="alert alert-primary" role="alert">
-                         <h4 class="alert-heading">Email sent</h4>
-                         <p>Email sent to ' . $_POST["for_email"] . '</p>
-                         <hr>
-                       </div>';
+                            Bootstrap_alert("primary", "Email Sent", "Email sent to". $_POST["for_email"]);
                         }
                     }
                 } catch (PDOException $e) {
