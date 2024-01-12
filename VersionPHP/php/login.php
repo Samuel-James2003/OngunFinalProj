@@ -169,8 +169,8 @@
         </div>
         <div>
             <?php
-            if ($loggedin) {
-                //why does it refresh the page aggghhh
+            if ($loggedin==2) {
+                //logged in
                 Javascript_alert("You are logged in ");
             }
             ?>
