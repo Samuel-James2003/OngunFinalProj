@@ -11,10 +11,10 @@
 </head>
 
 <body>
-    <!--Todo : Modular navbar for pages -->
-    <?php //todo : read the database and echo the right pages for the navbar and check if there is a submenu in that case do what you must
+    <?php
     require 'NavbarFilling.php';
     FillNavBar();
+    session_start();
     ?>
 
     <div class="container">
@@ -27,8 +27,8 @@
             $dbname = "bdvacances";
             $username = 'root';
             $pass = '';
+            $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : 0;
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
-
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $stmt = $conn->query("SELECT 
         j.JobID,
@@ -46,7 +46,7 @@
     JOIN 
         t_category cat ON j.CatID = cat.CatID
     WHERE 
-        pc.PersonID = '2';");
+        pc.PersonID = '". $UserID. "';");
 
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -78,19 +78,20 @@
             echo "</table>";
             ?>
             <br>
-            <input type="submit" class="btn btn-primary" value="Process Selected Rows">
+           
         </center>
     </div>
 
     <!-- TODO: Make a page for add(edit can go there too) -->
-
-    <div>
-        <button type="button" class="btn btn-primary" id="addButton"
-            onclick="location.href='add_record.php'">Add</button>
-        <button type="button" class="btn btn-danger" id="deleteButton" disabled>Delete</button>
-        <button type="button" class="btn btn-warning" id="editButton" disabled
-            onclick="location.href='edit_records.php'">Edit</button>
-    </div>
+    <center>
+        <div>
+            <button type="button" class="btn btn-primary" id="addButton"
+                onclick="location.href='add_record.php'">Add</button>
+            <button type="button" class="btn btn-danger" id="deleteButton" disabled>Delete</button>
+            <button type="button" class="btn btn-warning" id="editButton" disabled
+                onclick="location.href='edit_records.php'">Edit</button>
+        </div>
+    </center>
 
     <footer>
         <script>
@@ -116,13 +117,13 @@
             });
         </script>
         <!-- Bootstrap JavaScript Libraries -->
-        
+
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
             integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
             </script>
-            
 
-        
+
+
     </footer>
     <!-- Add Bootstrap JS and jQuery for popup functionality -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

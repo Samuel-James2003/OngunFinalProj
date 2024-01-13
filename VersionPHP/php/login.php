@@ -10,12 +10,14 @@
         .error {
             border: 2px solid red;
         }
-    </style>
+        </style>
 </head>
 
 <body>
     <div>
         <?php
+        ob_start(); //necessairy because php is a ******* fossil and i dont even know why i needed to spend 2 hours for this to fix it i am spechless 
+        session_start();
         require 'ReadID.php';
         require 'Alerts.php';
         require 'NavbarFilling.php';
@@ -23,7 +25,6 @@
         $dbname = "bdvacances";
         $username = 'root';
         $pass = '';
-        $loggedin = 0;
         $userInput = '';
         $error = '';
         FillNavBar();
@@ -37,12 +38,9 @@
             )
                 return true;
             else {
-                Bootstrap_alert("danger","Error", "Missing feild or not enough characters");
+                Bootstrap_alert("danger", "Error", "Missing feild or not enough characters");
                 return false;
             }
-        }
-        if ($loggedin == 1) {
-            $error = 'style="border:2px solid red" ';
         }
         ?>
     </div>
@@ -54,7 +52,8 @@
         <form id="login-form" method="post" class="needs-validation" novalidate>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" class="form-control" id="email-login" placeholder="Enter your email" name="log_email" required>
+                <input type="email" class="form-control" id="email-login" placeholder="Enter your email"
+                    name="log_email" required>
                 <div class="valid-feedback">
                     Looks good!
                 </div>
@@ -65,7 +64,8 @@
             </div>
             <div class="form-group">
                 <label for="password">Password:</label>
-                <input type="password" class="form-control" id="password" placeholder="Enter your password" name="log_password" required>
+                <input type="password" class="form-control" id="password" placeholder="Enter your password"
+                    name="log_password" required>
                 <div class="valid-feedback">
                     Looks good!
                 </div>
@@ -83,26 +83,31 @@
                 <div class="col-12">
                     <div class="form-group">
                         <label for="email-register">Email: *</label>
-                        <input type="email" class="form-control" id="email-register" placeholder="Enter your email" name="reg_email" required>
+                        <input type="email" class="form-control" id="email-register" placeholder="Enter your email"
+                            name="reg_email" required>
                     </div>
                     <div class="form-group">
                         <label for="password-register">Password: *</label>
-                        <input type="password" class="form-control" id="password-register" placeholder="Enter your password" name="reg_password" required>
+                        <input type="password" class="form-control" id="password-register"
+                            placeholder="Enter your password" name="reg_password" required>
                     </div>
                 </div>
                 <!-- Left Column -->
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="firstname-register">First Name:</label>
-                        <input type="firstname" class="form-control" id="firstname-register" placeholder="Enter your first name" name="reg_firstname">
+                        <input type="firstname" class="form-control" id="firstname-register"
+                            placeholder="Enter your first name" name="reg_firstname">
                     </div>
                     <div class="form-group">
                         <label for="surname-register">Surname:</label>
-                        <input type="surname" class="form-control" id="surname-register" placeholder="Enter your surname" name="reg_surname">
+                        <input type="surname" class="form-control" id="surname-register"
+                            placeholder="Enter your surname" name="reg_surname">
                     </div>
                     <div class="form-group">
                         <label for="Address-register">Address:</label>
-                        <input type="Address" class="form-control" id="address-register" placeholder="Enter your address" name="reg_address">
+                        <input type="Address" class="form-control" id="address-register"
+                            placeholder="Enter your address" name="reg_address">
                     </div>
                 </div>
                 <!-- Vertical Line -->
@@ -112,7 +117,8 @@
                     <div class="form-group">
                         <label for="custom-file">Place your eid file here:</label>
                         <div class="custom-file">
-                            <input type="file" class="form-control-file" name="customFile" id="customFile" accept=".eid">
+                            <input type="file" class="form-control-file" name="customFile" id="customFile"
+                                accept=".eid">
                         </div>
                     </div>
                 </div>
@@ -125,7 +131,8 @@
         <form id="forgotpassword-form" method="post" style="display: none;">
             <div class="form-group">
                 <label for="email-forgotpassword">Email:</label>
-                <input type="email" class="form-control" id="email-forgotpassword" placeholder="Enter your email" name="for_email">
+                <input type="email" class="form-control" id="email-forgotpassword" placeholder="Enter your email"
+                    name="for_email">
             </div>
             <input type="hidden" name="forgotpass" value="forgotpass">
             <button type="submit" class="btn btn-warning" name="submit" value="forgotpass">Send new
@@ -154,25 +161,16 @@
 
                     foreach ($res as $row) {
                         if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
-                            //
-                            $loggedin = 2;
+                            $_SESSION['UserID'] = $row['PersonID'];
+                            header("Location: http://projfin/php/dashboard.php");
                             break;
                         }
                     }
-                    if ($loggedin == 0) {
-                        $loggedin == 1;
-                    }
+                    
                 } catch (PDOException $e) {
-                    Bootstrap_alert("danger","Error", $e->getMessage());
+                    Bootstrap_alert("danger", "Error", $e->getMessage());
                 }
-            }
-            ?>
-        </div>
-        <div>
-            <?php
-            if ($loggedin==2) {
-                //logged in
-                Javascript_alert("You are logged in ");
+
             }
             ?>
         </div>
@@ -186,20 +184,22 @@
                         $fileinfo = extractDataFromFile($_FILES['customFile']['tmp_name']);
                         if (!$fileinfo) {
                             $fileinfo = null;
-                            Bootstrap_alert("danger","Error", "File not found");
+                            Bootstrap_alert("danger", "Error", "File not found");
                         }
                     }
                 } catch (Exception $e) {
-                    Bootstrap_alert("danger","Error", $e->getMessage());
+                    Bootstrap_alert("danger", "Error", $e->getMessage());
                 }
-                if (ValidateEntry(
-                    $_POST["reg_password"],
-                    $_POST["reg_firstname"],
-                    $_POST["reg_surname"],
-                    $_POST["reg_address"],
-                    $_POST["reg_email"],
-                    $fileinfo
-                )) {
+                if (
+                    ValidateEntry(
+                        $_POST["reg_password"],
+                        $_POST["reg_firstname"],
+                        $_POST["reg_surname"],
+                        $_POST["reg_address"],
+                        $_POST["reg_email"],
+                        $fileinfo
+                    )
+                ) {
                     if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
                         try {
                             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
@@ -214,10 +214,10 @@
                                 $stmt->execute([$fileinfo["firstname"], $fileinfo["name"], $fileinfo["streetandnumber"], $hashedString, $_POST["reg_email"]]);
                             }
                         } catch (PDOException $e) {
-                            Bootstrap_alert("danger","Error", $e->getMessage());
+                            Bootstrap_alert("danger", "Error", $e->getMessage());
                         }
                     } else {
-                        Bootstrap_alert("danger","Error", "Invalid email address");
+                        Bootstrap_alert("danger", "Error", "Invalid email address");
                     }
                 }
             }
@@ -236,13 +236,14 @@
 
                     foreach ($res as $row) {
                         if ($row["pEmail"] == $_POST["for_email"]) {
-                            Bootstrap_alert("primary", "Email Sent", "Email sent to". $_POST["for_email"]);
+                            Bootstrap_alert("primary", "Email Sent", "Email sent to" . $_POST["for_email"]);
                         }
                     }
                 } catch (PDOException $e) {
-                    Bootstrap_alert("danger","Error", $e->getMessage());
+                    Bootstrap_alert("danger", "Error", $e->getMessage());
                 }
             }
+            ob_end_flush();
             ?>
         </div>
     </div>
@@ -253,9 +254,9 @@
 
     <script>
         // Run this script when the page is loaded
-        $(document).ready(function() {
+        $(document).ready(function () {
             // Handle the switch to register form
-            $("#switch-to-register").click(function() {
+            $("#switch-to-register").click(function () {
                 // Hide the switch-to-register button and show the switch-to-login button
                 $("#switch-to-register").hide();
                 $("#switch-to-login").show();
@@ -266,7 +267,7 @@
             });
 
             // Handle the switch back to the login form
-            $("#switch-to-login").click(function() {
+            $("#switch-to-login").click(function () {
                 // Hide the switch-to-login button and show the switch-to-register button
                 $("#switch-to-login").hide();
                 $("#switch-to-register").show();
@@ -277,7 +278,7 @@
             });
 
             // Handle the switch to the forgot password form
-            $("#switch-to-forgotpass").click(function() {
+            $("#switch-to-forgotpass").click(function () {
                 // Hide both the login and register forms
                 $("#login-form").hide();
                 $("#register-form").hide();
@@ -291,7 +292,7 @@
 
         // Handle file drop event for registration
         const fileInput = document.getElementById("customFile");
-        fileInput.addEventListener("drop", function(event) {
+        fileInput.addEventListener("drop", function (event) {
             const file = event.dataTransfer.files[0];
             if (file) {
                 // Handle the dropped file, e.g., validate and process it
@@ -305,14 +306,14 @@
             // Change the color to default (remove error class) on every input
             textbox.classList.remove('error');
         }
-        (function() {
+        (function () {
             'use strict';
-            window.addEventListener('load', function() {
+            window.addEventListener('load', function () {
                 // Fetch all the forms we want to apply custom Bootstrap validation styles to
                 var forms = document.getElementsByClassName('needs-validation');
                 // Loop over them and prevent submission
-                var validation = Array.prototype.filter.call(forms, function(form) {
-                    form.addEventListener('submit', function(event) {
+                var validation = Array.prototype.filter.call(forms, function (form) {
+                    form.addEventListener('submit', function (event) {
                         if (form.checkValidity() === false) {
                             event.preventDefault();
                             event.stopPropagation();
