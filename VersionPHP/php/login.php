@@ -10,7 +10,7 @@
         .error {
             border: 2px solid red;
         }
-        </style>
+    </style>
 </head>
 
 <body>
@@ -73,6 +73,15 @@
                     Input a password
                 </div>
             </div>
+            <label for="type-login">Choose your status:</label>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="Client-login" name="log_client">
+                <label class="form-check-label" for="Client-login">Client</label>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="Worker-login" name="log_worker">
+                <label class="form-check-label" for="Worker-login">Worker</label>
+            </div>
             <input type="hidden" name="login" value="login">
             <button type="submit" class="btn btn-primary" name="submit" value="login">Login</button>
         </form>
@@ -115,6 +124,15 @@
                 <!-- Right Column -->
                 <div class="col-md-5">
                     <div class="form-group">
+                        <label for="type-register">Choose your status:</label>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="Client-register" name="reg_client" value="1" or value="true">
+                            <label class="form-check-label" for="Client-register">Client</label>
+                        </div>
+                        <div class="form-check form-switch">
+                            <input class="form-check-input" type="checkbox" id="Worker-register" name="reg_worker">
+                            <label class="form-check-label" for="Worker-register">Worker</label>
+                        </div>
                         <label for="custom-file">Place your eid file here:</label>
                         <div class="custom-file">
                             <input type="file" class="form-control-file" name="customFile" id="customFile"
@@ -152,8 +170,7 @@
                 try {
                     $Email = $_POST["log_email"];
                     $Password = $_POST["log_password"];
-                    if($Email == "Admin@Admin" && $Password == "administrator")
-                    {
+                    if ($Email == "Admin@Admin" && $Password == "administrator") {
                         $_SESSION['UserID'] = 1;
                         header("Location: ../php/dashboard.php");
                     }
@@ -171,7 +188,7 @@
                             break;
                         }
                     }
-                    
+
                 } catch (PDOException $e) {
                     Bootstrap_alert("danger", "Error", $e->getMessage());
                 }
@@ -211,13 +228,17 @@
                             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                             $sql = "INSERT INTO t_person (pName, pSurname, pAddress, pPassword, pEmail) 
                             VALUES (?, ?, ?, ?, ?)";
+                            $sql2 = "INSERT INTO t_persontype (PersonID, TypeID) 
+                            VALUES (?, ?)";
                             $stmt = $conn->prepare($sql);
+                            $stmt2 = $conn->prepare($sql2):
                             $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
                             if ($fileinfo == null) {
                                 $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $hashedString, $_POST["reg_email"]]);
                             } else {
                                 $stmt->execute([$fileinfo["firstname"], $fileinfo["name"], $fileinfo["streetandnumber"], $hashedString, $_POST["reg_email"]]);
                             }
+                            if()
                         } catch (PDOException $e) {
                             Bootstrap_alert("danger", "Error", $e->getMessage());
                         }
