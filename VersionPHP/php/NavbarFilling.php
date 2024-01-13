@@ -1,7 +1,7 @@
 <?php
 function FillNavBar()
 {
-    echo ' <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    echo '<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelFumd/popper.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>';
     $servername = 'localhost';
@@ -39,9 +39,9 @@ function FillNavBar()
         }
 
     }
+    echo '<div class="btn-group">';
     foreach ($navItems as $menuID => $menuItem) {
         // Output main menu buttons
-        echo '<div class="btn-group">';
         if (empty($menuItem['submenus'])) {
             echo '<button type="button" class="btn btn-primary" onclick="location.href=\'' . $menuItem['MPath'] . '\'">' . $menuItem['MName'] . '</button>';
         } else {
@@ -62,8 +62,8 @@ function FillNavBar()
             echo '</div>';
         }
 
-        echo '</div>';
     }
+    echo '</div>';
     echo '<script src="https://unpkg.com/@popperjs/core@2"></script>';
     echo "<script>
     $('.dropdown-toggle').dropdown() 

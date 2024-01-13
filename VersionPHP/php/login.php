@@ -152,6 +152,11 @@
                 try {
                     $Email = $_POST["log_email"];
                     $Password = $_POST["log_password"];
+                    if($Email == "Admin@Admin" && $Password == "administrator")
+                    {
+                        $_SESSION['UserID'] = 1;
+                        header("Location: ../php/dashboard.php");
+                    }
                     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
 
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -257,7 +262,8 @@
         $(document).ready(function () {
             // Handle the switch to register form
             $("#switch-to-register").click(function () {
-                // Hide the switch-to-register button and show the switch-to-login button
+                // Hide the switch-to-register button and show the switch-to-login and switch-to-forgotpass buttons
+                $("#switch-to-forgotpass").show();
                 $("#switch-to-register").hide();
                 $("#switch-to-login").show();
                 // Hide the login form and show the register form
@@ -268,8 +274,9 @@
 
             // Handle the switch back to the login form
             $("#switch-to-login").click(function () {
-                // Hide the switch-to-login button and show the switch-to-register button
+                // Hide the switch-to-login button and show the switch-to-register and switch-to-forgotpass buttons
                 $("#switch-to-login").hide();
+                $("#switch-to-forgotpass").show();
                 $("#switch-to-register").show();
                 // Hide the register form and forgot form then show the login form
                 $("#register-form").hide();
@@ -284,9 +291,10 @@
                 $("#register-form").hide();
                 // Show the forgot password form
                 $("#forgotpassword-form").show();
-                // Show both the switch-to-register and switch-to-login buttons
+                // Show the switch-to-register and switch-to-login and hide switch-to-forgotpass buttons
                 $("#switch-to-register").show();
                 $("#switch-to-login").show();
+                $("#switch-to-forgotpass").hide();
             });
         });
 

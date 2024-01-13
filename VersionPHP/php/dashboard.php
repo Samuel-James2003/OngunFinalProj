@@ -46,7 +46,7 @@
     JOIN 
         t_category cat ON j.CatID = cat.CatID
     WHERE 
-        pc.PersonID = '". $UserID. "';");
+        pc.PersonID = '" . $UserID . "';");
 
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -78,7 +78,7 @@
             echo "</table>";
             ?>
             <br>
-           
+
         </center>
     </div>
 
@@ -117,13 +117,9 @@
             });
         </script>
         <!-- Bootstrap JavaScript Libraries -->
-
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
             integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
             </script>
-
-
-
     </footer>
     <!-- Add Bootstrap JS and jQuery for popup functionality -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
