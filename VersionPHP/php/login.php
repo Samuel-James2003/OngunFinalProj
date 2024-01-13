@@ -75,11 +75,11 @@
             </div>
             <label for="type-login">Choose your status:</label>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="Client-login" name="log_client">
+                <input class="form-check-input" type="checkbox" id="Client-login" name="log_client" onclick="toggleSwitch('Client-login')">
                 <label class="form-check-label" for="Client-login">Client</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="Worker-login" name="log_worker">
+                <input class="form-check-input" type="checkbox" id="Worker-login" name="log_worker" onclick="toggleSwitch('Worker-login')">
                 <label class="form-check-label" for="Worker-login">Worker</label>
             </div>
             <input type="hidden" name="login" value="login">
@@ -126,7 +126,7 @@
                     <div class="form-group">
                         <label for="type-register">Choose your status:</label>
                         <div class="form-check form-switch">
-                            <input class="form-check-input" type="checkbox" id="Client-register" name="reg_client" value="1" or value="true">
+                            <input class="form-check-input" type="checkbox" id="Client-register" name="reg_client">
                             <label class="form-check-label" for="Client-register">Client</label>
                         </div>
                         <div class="form-check form-switch">
@@ -178,8 +178,10 @@
 
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $stmt = $conn->query("SELECT * FROM t_person");
+                    $stmt2 = $conn->query("SELECT * FROM t_persontype");
 
                     $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                    $res2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
                     foreach ($res as $row) {
                         if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
@@ -231,14 +233,21 @@
                             $sql2 = "INSERT INTO t_persontype (PersonID, TypeID) 
                             VALUES (?, ?)";
                             $stmt = $conn->prepare($sql);
-                            $stmt2 = $conn->prepare($sql2):
+                            $stmt2 = $conn->prepare($sql2);
                             $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
                             if ($fileinfo == null) {
                                 $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $hashedString, $_POST["reg_email"]]);
                             } else {
                                 $stmt->execute([$fileinfo["firstname"], $fileinfo["name"], $fileinfo["streetandnumber"], $hashedString, $_POST["reg_email"]]);
                             }
-                            if()
+                            if (isset($_POST["reg_client"])) {
+                                $lastInsertId = $conn->lastInsertId();
+                                $stmt2->execute([$lastInsertId, "1"]);
+                            }
+                            if (isset($_POST["reg_worker"])) {
+                                $lastInsertId = $conn->lastInsertId();
+                                $stmt2->execute([$lastInsertId, "2"]);
+                            }
                         } catch (PDOException $e) {
                             Bootstrap_alert("danger", "Error", $e->getMessage());
                         }
@@ -352,6 +361,15 @@
                 });
             }, false);
         })();
+        function toggleSwitch(id) {
+                    if (id === 'Client-login') {
+                        // Si le switch Client est activé, désactive le switch Worker
+                        document.getElementById('Worker-login').checked = false;
+                    } else if (id === 'Worker-login') {
+                        // Si le switch Worker est activé, désactive le switch Client
+                        document.getElementById('Client-login').checked = false;
+                    }
+                }
     </script>
 
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
