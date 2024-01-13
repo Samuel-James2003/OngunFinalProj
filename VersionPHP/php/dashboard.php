@@ -7,7 +7,11 @@
     <title>Dashboard</title>
     <!-- Add Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            alert('Vous êtes connecté !');
+        });
+    </script>
 </head>
 
 <body>
