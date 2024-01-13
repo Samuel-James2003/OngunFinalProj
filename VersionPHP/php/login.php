@@ -18,6 +18,7 @@
         <?php
         require 'ReadID.php';
         require 'Alerts.php';
+        require 'NavbarFilling.php';
         $servername = 'localhost';
         $dbname = "bdvacances";
         $username = 'root';
@@ -25,7 +26,7 @@
         $loggedin = 0;
         $userInput = '';
         $error = '';
-        
+        FillNavBar();
         function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo)
         {
             if ($fileinfo != null && !empty($password) && !empty($mail) && strlen($password) >= 8) {
