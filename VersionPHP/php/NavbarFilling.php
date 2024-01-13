@@ -1,6 +1,9 @@
 <?php
 function FillNavBar()
 {
+    echo ' <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelFumd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>';
     $servername = 'localhost';
     $dbname = "bdvacances";
     $username = 'root';
@@ -27,39 +30,47 @@ function FillNavBar()
             ];
         }
 
-        $navItems[$menuID]['submenus'][] = [
-            'SMName' => $row['SMName'],
-            'SMPath' => $row['SMPath'],
-        ];
-       
-    }
+        if ($submenuID != "") {
+            $navItems[$menuID]['submenus'][] = [
+                'SMName' => $row['SMName'],
+                'SMPath' => $row['SMPath'],
+            ];
 
-    // Generate the Bootstrap-styled navigation bar
-    echo '<nav class="navbar navbar-expand-lg navbar-light bg-light">';
-    echo '<div class="collapse navbar-collapse" id="navbarNav">';
-    echo '<ul class="navbar-nav">';
-
-    foreach ($navItems as $menuID => $menuItem) {
-        echo '<li class="nav-item">';
-        echo '<a class="nav-link" href="' . $menuItem['MPath'] . '">' . $menuItem['MName'] . '</a>';
-
-        // Check if there are submenus
-        if (!empty($menuItem['submenus'])) {
-            echo '<ul class="dropdown-menu">';
-            echo "Hellooo there";
-            foreach ($menuItem['submenus'] as $submenu) {
-                echo '<li>';
-                echo '<a class="dropdown-item" href="' . $submenu['SMPath'] . '">' . $submenu['SMName'] . '</a>';
-                echo '</li>';
-            }
-            echo '</ul>';
         }
 
-        echo '</li>';
     }
+    foreach ($navItems as $menuID => $menuItem) {
+        // Output main menu buttons
+        echo '<div class="btn-group">';
+        if (empty($menuItem['submenus'])) {
+            echo '<button type="button" class="btn btn-primary" onclick="location.href=\'' . $menuItem['MPath'] . '\'">' . $menuItem['MName'] . '</button>';
+        } else {
+            echo '<button type="button" class="btn btn-primary" onclick="location.href=\'#\'">' . $menuItem['MName'] . '</button>';
+        }
+        // Output dropdown if there are submenus
+        if (!empty($menuItem['submenus'])) {
+            echo '<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            echo '<span class="sr-only">Toggle Dropdown</span>';
+            echo '</button>';
+            echo '<div class="dropdown-menu">';
 
-    echo '</ul>';
-    echo '</div>';
-    echo '</nav>';
+            // Output submenu buttons
+            foreach ($menuItem['submenus'] as $submenu) {
+                echo '<a class="dropdown-item" href="' . $submenu['SMPath'] . '">' . $submenu['SMName'] . '</a>';
+            }
+
+            echo '</div>';
+        }
+
+        echo '</div>';
+    }
+    echo "<script> $('.dropdown-toggle').dropdown() </script>
+    <script>
+    var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
+    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+        return new bootstrap.Dropdown(dropdownToggleEl)
+    })
+</script>
+";
 }
 ?>
