@@ -76,6 +76,22 @@
             }
             // Close the table
             echo "</table>";
+            if (isset($_POST["delete"]) && $_POST["delete"] == "delete") {
+                if (isset($_POST["selected_rows"]) && is_array($_POST["selected_rows"])) {
+                    $selectedRows = $_POST["selected_rows"];
+                        foreach ($selectedRows as $jobIdToDelete) {
+                            $stmt = $conn->prepare("DELETE FROM t_job WHERE JobID = :jobId");
+                            $stmt->bindParam(':jobId', $jobIdToDelete);
+                            $stmt->execute();
+                        }
+                        // Redirect to the dashboard page after deletion
+                        header("Location: dashboard.php");
+                        exit();
+                    } 
+                        $conn = null;
+                } else {
+                    echo "No checkboxes selected.";
+                }
             ?>
             <br>
 
@@ -87,7 +103,8 @@
         <div>
             <button type="button" class="btn btn-primary" id="addButton"
                 onclick="location.href='add_record.php'">Add</button>
-            <button type="button" class="btn btn-danger" id="deleteButton" disabled>Delete</button>
+                <input type="hidden" name="delete" value="delete">
+            <button type="submit" class="btn btn-danger" name="deleteButton" disabled>Delete</button>
             <button type="button" class="btn btn-warning" id="editButton" disabled
                 onclick="location.href='edit_records.php'">Edit</button>
         </div>
