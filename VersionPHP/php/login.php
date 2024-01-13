@@ -162,7 +162,7 @@
                     foreach ($res as $row) {
                         if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
                             $_SESSION['UserID'] = $row['PersonID'];
-                            header("Location: http://projfin/php/dashboard.php");
+                            header("Location: ../php/dashboard.php");
                             break;
                         }
                     }
