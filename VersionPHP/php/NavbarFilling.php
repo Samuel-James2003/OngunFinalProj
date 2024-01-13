@@ -11,7 +11,8 @@ function FillNavBar()
     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
 
     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $stmt = $conn->query("SELECT * FROM t_menu
+    $stmt = $conn->query("SELECT t_menu.MenuID, t_menu.MName, t_menu.MPath, t_submenu.SubMenuID, t_submenu.SMName, t_submenu.SMPath
+    FROM t_menu
     LEFT JOIN t_submenu ON t_menu.MenuID = t_submenu.MenuID
     ORDER BY t_menu.MenuID;
     ");

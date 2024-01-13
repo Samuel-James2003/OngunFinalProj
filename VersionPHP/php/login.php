@@ -200,6 +200,10 @@
         <div>
             <?php
             if (isset($_POST["register"]) && $_POST["register"] == "register") {
+                // if( isset($_POST['reg_client'])){
+                //     echo $_POST['reg_client'];
+                //     echo "hello";
+                // }
                 $fileinfo = null;
                 try {
                     if ($_FILES['customFile']['error'] != 4 && !($_FILES['customFile']['size'] == 0 && $_FILES['customFile']['error'] == 0)) {
@@ -231,14 +235,14 @@
                             $sql2 = "INSERT INTO t_persontype (PersonID, TypeID) 
                             VALUES (?, ?)";
                             $stmt = $conn->prepare($sql);
-                            $stmt2 = $conn->prepare($sql2):
+                            $stmt2 = $conn->prepare($sql2);
                             $hashedString = password_hash($_POST["reg_password"], PASSWORD_DEFAULT);
                             if ($fileinfo == null) {
                                 $stmt->execute([$_POST["reg_firstname"], $_POST["reg_surname"], $_POST["reg_address"], $hashedString, $_POST["reg_email"]]);
                             } else {
                                 $stmt->execute([$fileinfo["firstname"], $fileinfo["name"], $fileinfo["streetandnumber"], $hashedString, $_POST["reg_email"]]);
                             }
-                            if()
+                            
                         } catch (PDOException $e) {
                             Bootstrap_alert("danger", "Error", $e->getMessage());
                         }
