@@ -49,7 +49,7 @@ function FillNavBar()
         }
         // Output dropdown if there are submenus
         if (!empty($menuItem['submenus'])) {
-            echo '<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+            echo '<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
             echo '<span class="sr-only">Toggle Dropdown</span>';
             echo '</button>';
             echo '<div class="dropdown-menu">';
@@ -64,13 +64,9 @@ function FillNavBar()
 
         echo '</div>';
     }
-    echo "<script> $('.dropdown-toggle').dropdown() </script>
-    <script>
-    var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'))
-    var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
-        return new bootstrap.Dropdown(dropdownToggleEl)
-    })
-</script>
-";
+    echo '<script src="https://unpkg.com/@popperjs/core@2"></script>';
+    echo "<script>
+    $('.dropdown-toggle').dropdown() 
+    </script>";
 }
 ?>
