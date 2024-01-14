@@ -6,7 +6,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['add'])) {
         //Add
         echoHtmlCode("Addition",0,$UserID);
-        echo "add button has been pressed";
     }
     if (isset($_POST['job_id'])) {
         try {

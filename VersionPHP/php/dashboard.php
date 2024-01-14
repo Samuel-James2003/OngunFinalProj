@@ -81,7 +81,7 @@
             JOIN 
                 t_category cat ON j.CatID = cat.CatID");
             }
-
+            $stmt->execute();
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Display records in the table
@@ -98,13 +98,13 @@
                     echo "<td>" . $row["DateCreated"] . "</td>";
                     echo "<td>";
                     if ($row["isDone"] == 1) {
-                        echo '<span class="badge bg-success">State</span>';
+                        echo '<span class="badge bg-success">Complete</span>';
                     } elseif ($row["isDoneClient"] == 1) {
-                        echo '<span class="badge bg-warning">State</span>';
+                        echo '<span class="badge bg-warning">Client complete</span>';
                     } elseif ($row["isDoneWorker"] == 1) {
-                        echo '<span class="badge bg-info">State</span>';
+                        echo '<span class="badge bg-info">Worker complete</span>';
                     } else {
-                        echo '<span class="badge bg-danger">State</span>';
+                        echo '<span class="badge bg-danger">Incomplete</span>';
                     }
                     echo "</td>";
                     echo "<td>" . $row["CName"] . "</td>";

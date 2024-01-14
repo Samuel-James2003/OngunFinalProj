@@ -44,10 +44,24 @@ function echoHtmlCode($title, $jobID, $ID)
       <label for="options">Select an option:</label>
       <select class="form-control" id="options" name="options" required>';
 
-        $options = array("Option 1", "Option 2", "Option 3");
-        
-        foreach ($options as $option) {
-            echo "<option value='" . htmlspecialchars($option) . "'>" . htmlspecialchars($option) . "</option>";
+        $servername = 'localhost';
+        $dbname = "bdvacances";
+        $username = 'root';
+        $pass = '';
+        try {
+            $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+            $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+
+            $stmt = $conn->prepare("SELECT * FROM t_category");
+            $stmt->execute(); 
+            $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            foreach ($res as $row) {
+                echo "<!--" . $row['CName'] . "-->";
+                echo "<option value='" . htmlspecialchars($row['CName']) . "'>" . htmlspecialchars($row['CName']) . "</option>";
+            }
+        } catch (PDOException $e) {
+            echo "Error: " . $e->getMessage();
         }
         echo '</select>';
 

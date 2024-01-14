@@ -90,7 +90,7 @@ function FillNavBar($ID)
         }
     }
     if($ID != 0 ){
-    
+        echo '<button type="button" class="btn btn-primary" onclick="location.href=\'./dashboard.php\'">'."Dashboard".'</button>';
     echo '<button type="button" class="btn btn-outline-dark" style="margin-left: 50px;" onclick="location.href=\'./userpage.php\'">'.$name.'</button>';
 }
 
