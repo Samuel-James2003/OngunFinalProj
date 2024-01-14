@@ -28,17 +28,18 @@
         $userInput = '';
         $error = '';
         FillNavBar();
-        function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo)
+        function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo, $switchclient, $switchworker)
         {
-            if ($fileinfo != null && !empty($password) && !empty($mail) && strlen($password) >= 8) {
-                return true;
-            } elseif (
-                !empty($password) && !empty($firstname) && !empty($surname) && !empty($address) && !empty($mail) && strlen($firstname) >= 2
-                && strlen($address) >= 8 && strlen($password) >= 8
-            )
-                return true;
-            else {
-                Bootstrap_alert("danger", "Error", "Missing feild or not enough characters");
+            if ($switchclient != null || $switchworker != null) {
+                if ($fileinfo != null && !empty($password) && !empty($mail) && strlen($password) >= 8) {
+                    return true;
+                } elseif (
+                    !empty($password) && !empty($firstname) && !empty($surname) && !empty($address) && !empty($mail) && strlen($firstname) >= 2
+                    && strlen($address) >= 8 && strlen($password) >= 8
+                )
+                    return true;
+            } else {
+                Bs_dismissable_alert("danger", "Error", "Missing field or not enough characters");
                 return false;
             }
         }
@@ -75,11 +76,13 @@
             </div>
             <label for="type-login">Choose your status:</label>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="Client-login" name="log_client" onclick="toggleSwitch('Client-login')">
+                <input class="form-check-input" type="checkbox" id="Client-login" name="log_client"
+                    onclick="toggleSwitch('Client-login')">
                 <label class="form-check-label" for="Client-login">Client</label>
             </div>
             <div class="form-check form-switch">
-                <input class="form-check-input" type="checkbox" id="Worker-login" name="log_worker" onclick="toggleSwitch('Worker-login')">
+                <input class="form-check-input" type="checkbox" id="Worker-login" name="log_worker"
+                    onclick="toggleSwitch('Worker-login')">
                 <label class="form-check-label" for="Worker-login">Worker</label>
             </div>
             <input type="hidden" name="login" value="login">
@@ -221,7 +224,9 @@
                         $_POST["reg_surname"],
                         $_POST["reg_address"],
                         $_POST["reg_email"],
-                        $fileinfo
+                        $fileinfo,
+                        isset($_POST['reg_client']) ? $_POST['reg_client'] : null,
+                        isset($_POST['reg_worker']) ? $_POST['reg_worker'] : null
                     )
                 ) {
                     if (filter_var($_POST["reg_email"], FILTER_VALIDATE_EMAIL)) {
@@ -362,14 +367,14 @@
             }, false);
         })();
         function toggleSwitch(id) {
-                    if (id === 'Client-login') {
-                        // Si le switch Client est activé, désactive le switch Worker
-                        document.getElementById('Worker-login').checked = false;
-                    } else if (id === 'Worker-login') {
-                        // Si le switch Worker est activé, désactive le switch Client
-                        document.getElementById('Client-login').checked = false;
-                    }
-                }
+            if (id === 'Client-login') {
+                // Si le switch Client est activé, désactive le switch Worker
+                document.getElementById('Worker-login').checked = false;
+            } else if (id === 'Worker-login') {
+                // Si le switch Worker est activé, désactive le switch Client
+                document.getElementById('Client-login').checked = false;
+            }
+        }
     </script>
 </body>
 
