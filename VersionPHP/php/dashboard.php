@@ -6,17 +6,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <!-- Add Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- <script>
         document.addEventListener('DOMContentLoaded', function () {
             alert('Vous êtes connecté !');
         });
-    </script>
+    </script> -->
 </head>
 
 <body>
     <?php
     require 'NavbarFilling.php';
+    require 'Alerts.php';
     FillNavBar();
     session_start();
     ?>
@@ -55,10 +56,15 @@
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Display records in the table
+           
             if ($stmt->rowCount() > 0) {
                 foreach ($res as $row) {
                     echo "<tr>";
-                    echo "<td><input type='checkbox' name='selected_rows[]' value='" . $row['JobID'] . "'></td>";
+                    echo "<td><form action='dasboardcrud.php' method='post'>";
+                    echo "<input type='hidden' name='job_id' value='" . $row['JobID'] . "'>";
+                    echo "<button type='submit' name='delete' class='btn btn-danger'>-</button>";
+                    echo "<button type='submit' name='edit' class='btn btn-warning'>".'<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path d="M7.127 22.562l-7.127 1.438 1.438-7.128 5.689 5.69zm1.414-1.414l11.228-11.225-5.69-5.692-11.227 11.227 5.689 5.69zm9.768-21.148l-2.816 2.817 5.691 5.691 2.816-2.819-5.691-5.689z"/>'."</svg></button>";
+                    echo "</form></td>";
                     echo "<td>" . $row["JobID"] . "</td>";
                     echo "<td>" . $row["DateCreated"] . "</td>";
                     echo "<td>";
@@ -78,65 +84,33 @@
             } else {
                 echo "<tr><td colspan='5'>No records found</td></tr>";
             }
-            // Close the table
+            
             echo "</table>";
-            if (isset($_POST["delete"]) && $_POST["delete"] == "delete") {
-                if (isset($_POST["selected_rows"]) && is_array($_POST["selected_rows"])) {
-                    $selectedRows = $_POST["selected_rows"];
-                        foreach ($selectedRows as $jobIdToDelete) {
-                            $stmt = $conn->prepare("DELETE FROM t_job WHERE JobID = :jobId");
-                            $stmt->bindParam(':jobId', $jobIdToDelete);
-                            $stmt->execute();
-                        }
-                        // Redirect to the dashboard page after deletion
-                        header("Location: dashboard.php");
-                        exit();
-                    } 
-                        $conn = null;
-                } else {
-                    echo "No checkboxes selected.";
-                }
             ?>
             <br>
-
-        </center>
+            </center>
+            
     </div>
 
     <!-- TODO: Make a page for add(edit can go there too) -->
     <center>
-        <div>
-            <button type="button" class="btn btn-primary" id="addButton"
-                onclick="location.href='add_record.php'">Add</button>
-                <input type="hidden" name="delete" value="delete">
-            <button type="submit" class="btn btn-danger" name="deleteButton" disabled>Delete</button>
-            <button type="button" class="btn btn-warning" id="editButton" disabled
-                onclick="location.href='edit_records.php'">Edit</button>
-        </div>
+    <form action='dasboardcrud.php' method='post'>
+        <button type="submit" name="add" class="btn btn-primary">Add</button>
+    </form>
+
     </center>
-
+    <div>
+        <?php
+       
+       $deleted = isset($_SESSION['deleted']) ? $_SESSION['deleted'] : 0;
+       if($deleted){
+        Bs_dismissable_alert("danger", "Delete successfull","Successfully deleted the entry");
+        $_SESSION['deleted'] = null;
+       }
+        ?>
+    </div>
     <footer>
-        <script>
-            document.addEventListener('DOMContentLoaded', function () {
-                var checkboxes = document.querySelectorAll('input[type="checkbox"]');
-                var addButton = document.getElementById('addButton');
-                var deleteButton = document.getElementById('deleteButton');
-                var editButton = document.getElementById('editButton');
-
-                checkboxes.forEach(function (checkbox) {
-                    checkbox.addEventListener('change', function () {
-                        var selectedCheckboxes = document.querySelectorAll('input[name="selected_rows[]"]:checked');
-
-                        if (selectedCheckboxes.length === 1) {
-                            editButton.removeAttribute('disabled');
-                            deleteButton.removeAttribute('disabled');
-                        } else {
-                            editButton.setAttribute('disabled', 'disabled');
-                            deleteButton.setAttribute('disabled', 'disabled');
-                        }
-                    });
-                });
-            });
-        </script>
+        
         <!-- Bootstrap JavaScript Libraries -->
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
             integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous">
@@ -144,7 +118,7 @@
     </footer>
     <!-- Add Bootstrap JS and jQuery for popup functionality -->
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 </body>
 
 </html>
