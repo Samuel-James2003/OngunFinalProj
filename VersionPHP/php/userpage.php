@@ -14,6 +14,7 @@
 
 <body>
     <?php
+    ob_start();
     require 'UsefulFunctions.php';
     session_start();
     $servername = 'localhost';
@@ -100,6 +101,8 @@
                 echo '<br>';
                 echo '<input type="hidden" name="update" value="update">';
                 echo '<button type="submit" class="btn btn-success" name="update" value="update">Update</button>';
+                echo '<input type="hidden" name="disconnect" value="disconnect">';
+                echo '<button type="submit" class="btn btn-danger" name="disconnect" value="disconnect">Disconnection</button>';
                 echo '</form>';
             } else {
                 echo "<script>
@@ -111,6 +114,12 @@
     }
     ?>
     <?php
+    if (isset($_POST["disconnect"]) && $_POST["disconnect"] == "disconnect") {
+        session_destroy();
+        // Rediriger vers la page de connexion par exemple
+        header("Location: ../html/index");
+        die();
+    }
     if (isset($_POST["update"]) && $_POST["update"] == "update") {
         if (
             ValidateEntry(
@@ -181,7 +190,7 @@
             }
         }
     }
-    
+    ob_end_flush();
     ?>
     <footer>
         <script>function toggleSwitch(id) {
