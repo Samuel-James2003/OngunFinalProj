@@ -18,7 +18,7 @@ function ValidateEntry($password, $firstname, $surname, $address, $mail, $filein
         return false;
     }
 }
-function echoHtmlCode($title, $jobID, $ID)
+function echoStartHtmlCode($title, $jobID, $ID)
 {
     echo '<!doctype html>';
     echo '<html lang="en">';
@@ -35,7 +35,7 @@ function echoHtmlCode($title, $jobID, $ID)
     echo '<main>';
     if ($title == "Addition" || $title == "Edit") {
 
-        echo '<div class="form-group">
+        echo '<form action="' . $title . '.php" method="post"><div class="form-group">
       <label for="datetime">Date and Time:</label>
       <input type="datetime-local" class="form-control" id="datetime" name="datetime" required>
     </div>
@@ -53,7 +53,7 @@ function echoHtmlCode($title, $jobID, $ID)
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
             $stmt = $conn->prepare("SELECT * FROM t_category");
-            $stmt->execute(); 
+            $stmt->execute();
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($res as $row) {
@@ -64,8 +64,13 @@ function echoHtmlCode($title, $jobID, $ID)
             echo "Error: " . $e->getMessage();
         }
         echo '</select>';
+        echo '<button type="submit" name='. $title. ' class="btn btn-primary">'.$title.'</button>';
+        echo "</form>";
 
     }
+}
+function echoEndHtmlCode()
+{
     echo '</main>';
     echo '<footer>';
     // You can add your footer code here

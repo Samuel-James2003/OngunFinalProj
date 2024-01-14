@@ -5,7 +5,8 @@ $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : 0;
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if (isset($_POST['add'])) {
         //Add
-        echoHtmlCode("Addition",0,$UserID);
+        echoStartHtmlCode("Addition",0,$UserID);
+
     }
     if (isset($_POST['job_id'])) {
         try {
@@ -26,10 +27,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
             if (isset($_POST['edit'])) {
                 //Edit
-                echoHtmlCode("Edit",$jobId, $UserID);
+                echoStartHtmlCode("Edit",$jobId, $UserID);
             }
            
         } catch (\Throwable $th) {}
     }
 }
+?>
+
+
+
+
+        
+<?php
+echoEndHtmlCode();
 ?>
