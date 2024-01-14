@@ -28,8 +28,10 @@
 <body>
     <header>
     <?php
-    require 'NavbarFilling.php';
-    FillNavBar(0);
+    require 'UsefulFunctions.php';
+    session_start();
+    $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : 0;
+    FillNavBar($UserID);
     ?>
     </header>
         <main class="container">
