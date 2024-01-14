@@ -45,8 +45,7 @@ function echoHtmlCode($title, $jobID, $ID)
       <select class="form-control" id="options" name="options" required>';
 
         $options = array("Option 1", "Option 2", "Option 3");
-
-
+        
         foreach ($options as $option) {
             echo "<option value='" . htmlspecialchars($option) . "'>" . htmlspecialchars($option) . "</option>";
         }

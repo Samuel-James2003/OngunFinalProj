@@ -18,9 +18,7 @@
         <?php
         ob_start(); //necessairy because php is a ******* fossil and i dont even know why i needed to spend 2 hours for this to fix it i am spechless 
         session_start();
-        require 'ReadID.php';
-        require 'Alerts.php';
-        require 'NavbarFilling.php';
+        require 'UsefulFunctions.php';
         $servername = 'localhost';
         $dbname = "bdvacances";
         $username = 'root';
@@ -30,21 +28,6 @@
 
         $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : 0;
         FillNavBar($UserID);
-        function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo, $switchclient, $switchworker)
-        {
-            if ($switchclient != null || $switchworker != null) {
-                if ($fileinfo != null && !empty($password) && !empty($mail) && strlen($password) >= 8) {
-                    return true;
-                } elseif (
-                    !empty($password) && !empty($firstname) && !empty($surname) && !empty($address) && !empty($mail) && strlen($firstname) >= 2
-                    && strlen($address) >= 8 && strlen($password) >= 8
-                )
-                    return true;
-            } else {
-                Bs_dismissable_alert("danger", "Error", "Missing field or not enough characters");
-                return false;
-            }
-        }
         ?>
     </div>
     <!-- Registration, Login and Forgot password Forms -->
@@ -79,7 +62,7 @@
             <label for="type-login">Choose your status:</label>
             <div class="form-check form-switch">
                 <input class="form-check-input" type="checkbox" id="Client-login" name="log_client"
-                    onclick="toggleSwitch('Client-login')">
+                    onclick="toggleSwitch('Client-login')" checked>
                 <label class="form-check-label" for="Client-login">Client</label>
             </div>
             <div class="form-check form-switch">
