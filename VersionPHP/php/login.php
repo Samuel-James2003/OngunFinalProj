@@ -174,6 +174,7 @@
                         $_SESSION['UserID'] = 1;
                         header("Location: ../php/dashboard.php");
                     }
+                    else{
                     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
 
                     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -190,6 +191,7 @@
                             break;
                         }
                     }
+                }
 
                 } catch (PDOException $e) {
                     Bootstrap_alert("danger", "Error", $e->getMessage());
