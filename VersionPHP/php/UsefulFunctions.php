@@ -74,7 +74,7 @@ function echoStartHtmlCode($title, $jobID, $ID)
 
             foreach ($res as $row) {
                 echo "<!--" . $row['CName'] . "-->";
-                echo "<option value='" . htmlspecialchars($row['CName']) . "'>" . htmlspecialchars($row['CName']) . "</option>";
+                echo "<option value='" . htmlspecialchars($row['CatID']) . "'>" . htmlspecialchars($row['CName']) . "</option>";
             }
         } catch (PDOException $e) {
             echo "Error: " . $e->getMessage();
