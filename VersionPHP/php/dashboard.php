@@ -69,13 +69,13 @@
                     echo "<td>" . $row["DateCreated"] . "</td>";
                     echo "<td>";
                     if ($row["isDone"] == 1) {
-                        echo '<span class="badge badge-success">State</span>';
+                        echo '<span class="badge bg-success">State</span>';
                     } elseif ($row["isDoneClient"] == 1) {
-                        echo '<span class="badge badge-warning">State</span>';
+                        echo '<span class="badge bg-warning">State</span>';
                     } elseif ($row["isDoneWorker"] == 1) {
-                        echo '<span class="badge badge-info">State</span>';
+                        echo '<span class="badge bg-info">State</span>';
                     } else {
-                        echo '<span class="badge badge-danger">State</span>';
+                        echo '<span class="badge bg-danger">State</span>';
                     }
                     echo "</td>";
                     echo "<td>" . $row["CName"] . "</td>";

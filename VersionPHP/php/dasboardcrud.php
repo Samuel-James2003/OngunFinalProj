@@ -20,6 +20,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $stmt->bindParam(':jobId', $jobId);
                 $stmt->execute();
                 $_SESSION['deleted'] = true;
+                header("Location: ./dashboard.php");
             }
             if (isset($_POST['edit'])) {
                 echo "The edit button has been pressed for ";
@@ -27,7 +28,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             }
            
         } catch (\Throwable $th) {}
-        header("Location: ./dashboard.php");
     }
 }
 ?>
