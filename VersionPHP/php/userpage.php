@@ -119,7 +119,7 @@
                 $_POST["up_surname"],
                 $_POST["up_address"],
                 $_POST["up_email"],
-                $fileinfo,
+                null,
                 isset($_POST['up_client']) ? $_POST['up_client'] : null,
                 isset($_POST['up_worker']) ? $_POST['up_worker'] : null
             )
@@ -131,7 +131,7 @@
                     $verif = $conn->query("SELECT pPassword FROM t_person WHERE PersonID =" . $UserID);
                     $res = $verif->fetchAll(PDO::FETCH_ASSOC);
                     foreach ($res as $row) {
-                        if ((!password_verify($Password, $row['pPassword']))) {
+                        if ((!password_verify($_POST["up_password"], $row['pPassword']))) {
                             Bs_dismissable_alert("danger", "Error", "Wrong password bitch");
                             break;
                         } else {
@@ -143,10 +143,10 @@
                                     pPassword = ?,
                                     pEmail = ?
                                     WHERE PersonID = ?";
-            
+
                             $stmt = $conn->prepare($sql);
                             $hashedString = password_hash($_POST["up_password"], PASSWORD_DEFAULT);
-            
+
                             $stmt->execute([
                                 $_POST["up_firstname"],
                                 $_POST["up_surname"],
@@ -155,16 +155,16 @@
                                 $_POST["up_email"],
                                 $UserID
                             ]);
-            
+
                             // Requête DELETE pour supprimer les enregistrements dans t_persontype
-                            $sqlDelete = "DELETE FROM t_persontype WHERE PersonID = " .$UserID;
+                            $sqlDelete = "DELETE FROM t_persontype WHERE PersonID = " . $UserID;
                             $stmtDelete = $conn->prepare($sqlDelete);
-                            $stmtDelete->execute([$UserID]);
-            
+                            $stmtDelete->execute();
+
                             // Requête INSERT pour ajouter les nouveaux enregistrements dans t_persontype
                             $sqlInsert = "INSERT INTO t_persontype (PersonID, TypeID) VALUES (?, ?)";
                             $stmtInsert = $conn->prepare($sqlInsert);
-            
+
                             if (isset($_POST["up_client"])) {
                                 $stmtInsert->execute([$UserID, "1"]);
                             }
@@ -181,8 +181,7 @@
             }
         }
     }
-
-
+    
     ?>
     <footer>
         <script>function toggleSwitch(id) {
@@ -192,6 +191,29 @@
                     document.getElementById('Worker-update').checked = true;
                 }
             }</script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function () {
+                // Fonction pour inverser les switches
+                function toggleSwitches() {
+                    var clientSwitch = document.getElementById('Client-update');
+                    var workerSwitch = document.getElementById('Worker-update');
+
+                    // Vérifier si les deux switches sont éteints
+                    if (!clientSwitch.checked && !workerSwitch.checked) {
+                        // Inverser les états des switches
+                        clientSwitch.checked = true;
+                        workerSwitch.checked = true;
+                    }
+                }
+
+                // Appeler la fonction au chargement de la page
+                toggleSwitches();
+
+                // Ajouter un gestionnaire d'événement pour détecter les changements dans les switches
+                document.getElementById('Client-update').addEventListener('change', toggleSwitches);
+                document.getElementById('Worker-update').addEventListener('change', toggleSwitches);
+            });
+        </script>
     </footer>
     <!-- Bootstrap JavaScript Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
