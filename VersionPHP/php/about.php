@@ -29,7 +29,7 @@
     <header>
     <?php
     require 'NavbarFilling.php';
-    FillNavBar();
+    FillNavBar(0);
     ?>
     </header>
         <main class="container">

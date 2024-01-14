@@ -25,7 +25,11 @@
         $dbname = "bdvacances";
         $username = 'root';
         $pass = '';
-        FillNavBar();
+        $userInput = '';
+        $error = '';
+
+        $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : 0;
+        FillNavBar($UserID);
         function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo, $switchclient, $switchworker)
         {
             if ($switchclient != null || $switchworker != null) {
@@ -173,26 +177,27 @@
                     $Password = $_POST["log_password"];
                     if ($Email == "Admin@Admin" && $Password == "administrator") {
                         $_SESSION['UserID'] = 1;
+                        $_SESSION['ShowedLogin'] = true;
                         header("Location: ../php/dashboard.php");
-                    }
-                    else{
-                    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+                    } else {
+                        $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
 
-                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-                    $stmt = $conn->query("SELECT * FROM t_person");
-                    $stmt2 = $conn->query("SELECT * FROM t_persontype");
+                        $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                        $stmt = $conn->query("SELECT * FROM t_person");
+                        $stmt2 = $conn->query("SELECT * FROM t_persontype");
 
-                    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                    $res2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
+                        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        $res2 = $stmt2->fetchAll(PDO::FETCH_ASSOC);
 
-                    foreach ($res as $row) {
-                        if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
-                            $_SESSION['UserID'] = $row['PersonID'];
-                            header("Location: ../php/dashboard.php");
-                            break;
+                        foreach ($res as $row) {
+                            if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
+                                $_SESSION['UserID'] = $row['PersonID'];
+                                $_SESSION['ShowedLogin'] = true;
+                                header("Location: ../php/dashboard.php");
+                                break;
+                            }
                         }
                     }
-                }
 
                 } catch (PDOException $e) {
                     Bootstrap_alert("danger", "Error", $e->getMessage());

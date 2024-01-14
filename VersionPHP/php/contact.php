@@ -17,7 +17,9 @@
         <!-- place navbar here -->
         <?php
         require 'NavbarFilling.php';
-        FillNavBar();
+        session_start();
+        $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : 0;
+        FillNavBar($UserID);
         ?>
     </header>
 
@@ -27,8 +29,8 @@
                 <h2>Contact Samuel James</h2>
                 <p>You can reach out to Samuel James using the following information:</p>
                 <ul class="list-unstyled">
-                    <li><strong>Phone:</strong> Your friend's phone number</li>
-                    <li><strong>Email:</strong> Your friend's email address</li>
+                    <li><strong>Phone:</strong>0496760752</li>
+                    <li><strong>Email:</strong> samuel.james@student.hel.be</li>
                 </ul>
             </div>
             <div class="col-md-6">
