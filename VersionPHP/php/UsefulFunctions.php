@@ -35,14 +35,6 @@ function echoStartHtmlCode($title, $jobID, $ID)
     echo '<main>';
     if ($title == "Addition" || $title == "Edit") {
 
-        echo '<form action="' . $title . '.php" method="post"><div class="form-group">
-      <label for="datetime">Date and Time:</label>
-      <input type="datetime-local" class="form-control" id="datetime" name="datetime" required>
-    </div>
-
-    <div class="form-group">
-      <label for="options">Select an option:</label>
-      <select class="form-control" id="options" name="options" required>';
 
         $servername = 'localhost';
         $dbname = "bdvacances";
@@ -51,7 +43,31 @@ function echoStartHtmlCode($title, $jobID, $ID)
         try {
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            if($title == "Edit"){
+            $stmt = $conn->prepare("SELECT DateCreated, CatID FROM t_job WHERE JobID =" . $jobID);
+            $stmt->execute();
+            $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+            foreach ($res as $row) {
+                echo '<form action="' . $title . '.php" method="post"><div class="form-group">
+          <label for="datetime">Date and Time:</label>
+          <input type="datetime-local" class="form-control" id="datetime" name="datetime" value="' . $row["DateCreated"] . '"required>
+        </div>
+    
+        <div class="form-group">
+          <label for="options">Select an option:</label>
+          <select class="form-control" id="options" name="options" required>';
+            }
+        }else{
+            echo '<form action="' . $title . '.php" method="post"><div class="form-group">
+          <label for="datetime">Date and Time:</label>
+          <input type="datetime-local" class="form-control" id="datetime" name="datetime" value=""required>
+        </div>
+    
+        <div class="form-group">
+          <label for="options">Select an option:</label>
+          <select class="form-control" id="options" name="options" required>';
+        }
             $stmt = $conn->prepare("SELECT * FROM t_category");
             $stmt->execute();
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -64,7 +80,7 @@ function echoStartHtmlCode($title, $jobID, $ID)
             echo "Error: " . $e->getMessage();
         }
         echo '</select>';
-        echo '<button type="submit" name='. $title. ' class="btn btn-primary">'.$title.'</button>';
+        echo '<button type="submit" name=' . $title . ' class="btn btn-primary">' . $title . '</button>';
         echo "</form>";
 
     }
