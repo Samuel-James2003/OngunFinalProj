@@ -202,10 +202,6 @@
         <div>
             <?php
             if (isset($_POST["register"]) && $_POST["register"] == "register") {
-                // if( isset($_POST['reg_client'])){
-                //     echo $_POST['reg_client'];
-                //     echo "hello";
-                // }
                 $fileinfo = null;
                 try {
                     if ($_FILES['customFile']['error'] != 4 && !($_FILES['customFile']['size'] == 0 && $_FILES['customFile']['error'] == 0)) {
