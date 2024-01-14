@@ -45,7 +45,8 @@
             // Display table header
             echo "<table class='table table-bordered'>";
             echo "<thead class='thead-dark'><tr><th>Select</th><th>ID</th><th>Date Created</th><th>Completion</th><th>Category</th></tr></thead>";
-            $stmt = $conn->query("SELECT 
+            if ($UserID != 1) {
+                $stmt = $conn->query("SELECT 
         j.JobID,
         j.DateCreated,
         c.isDoneWorker,
@@ -62,6 +63,24 @@
         t_category cat ON j.CatID = cat.CatID
     WHERE 
         pc.PersonID = '" . $UserID . "';");
+            }
+            elseif($UserID == 1){
+                $stmt = $conn->query("SELECT 
+                j.JobID,
+                j.DateCreated,
+                c.isDoneWorker,
+                c.isDoneClient,
+                c.isDone,
+                cat.CName
+            FROM 
+                t_job j
+            JOIN 
+                t_contract c ON j.ContractID = c.ContractID
+            JOIN 
+                t_pivcontract pc ON c.ContractID = pc.ContractID
+            JOIN 
+                t_category cat ON j.CatID = cat.CatID");
+            }
 
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
