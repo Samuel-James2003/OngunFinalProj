@@ -25,8 +25,6 @@
         $dbname = "bdvacances";
         $username = 'root';
         $pass = '';
-        $userInput = '';
-        $error = '';
         FillNavBar();
         function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo, $switchclient, $switchworker)
         {
