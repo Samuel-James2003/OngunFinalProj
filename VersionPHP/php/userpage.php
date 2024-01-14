@@ -45,13 +45,13 @@
                 $UserName = $row['pName'];
                 $UserSurname = $row['pSurname'];
                 $UserAddress = $row['pAddress'];
-                    echo '<div class="container-sm">';
-                    echo '<h2>Login or Register</h2>';
-                    echo '<form id="update-form" method="post" enctype="multipart/form-data" novalidate>';
-                    echo '    <div class="row g-3">';
-                    echo '        <div class="col-12">';
-                    echo '            <div class="form-group">';
-                    echo '                <label for="email-update">Email: *</label>';
+                echo '<div class="container-sm">';
+                echo '<h2>Update your profile</h2>';
+                echo '<form id="update-form" method="post" enctype="multipart/form-data" novalidate>';
+                echo '    <div class="row g-3">';
+                echo '        <div class="col-12">';
+                echo '            <div class="form-group">';
+                echo '                <label for="email-update">Email: *</label>';
                 echo '                <input type="email" class="form-control" id="email-update" value=' . $UserEmail . ' name="up_email" required>';
                 echo '            </div>';
                 echo '            <div class="form-group">';
@@ -110,7 +110,80 @@
         }
     }
     ?>
+    <?php
+    if (isset($_POST["update"]) && $_POST["update"] == "update") {
+        if (
+            ValidateEntry(
+                $_POST["up_password"],
+                $_POST["up_firstname"],
+                $_POST["up_surname"],
+                $_POST["up_address"],
+                $_POST["up_email"],
+                $fileinfo,
+                isset($_POST['up_client']) ? $_POST['up_client'] : null,
+                isset($_POST['up_worker']) ? $_POST['up_worker'] : null
+            )
+        ) {
+            if (filter_var($_POST["up_email"], FILTER_VALIDATE_EMAIL)) {
+                try {
+                    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
+                    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+                    $verif = $conn->query("SELECT pPassword FROM t_person WHERE PersonID =" . $UserID);
+                    $res = $verif->fetchAll(PDO::FETCH_ASSOC);
+                    foreach ($res as $row) {
+                        if ((!password_verify($Password, $row['pPassword']))) {
+                            Bs_dismissable_alert("danger", "Error", "Wrong password bitch");
+                            break;
+                        } else {
+                            // Requête UPDATE pour mettre à jour les informations dans t_person
+                            $sql = "UPDATE t_person SET 
+                                    pName = ?,
+                                    pSurname = ?,
+                                    pAddress = ?,
+                                    pPassword = ?,
+                                    pEmail = ?
+                                    WHERE PersonID = ?";
+            
+                            $stmt = $conn->prepare($sql);
+                            $hashedString = password_hash($_POST["up_password"], PASSWORD_DEFAULT);
+            
+                            $stmt->execute([
+                                $_POST["up_firstname"],
+                                $_POST["up_surname"],
+                                $_POST["up_address"],
+                                $hashedString,
+                                $_POST["up_email"],
+                                $UserID
+                            ]);
+            
+                            // Requête DELETE pour supprimer les enregistrements dans t_persontype
+                            $sqlDelete = "DELETE FROM t_persontype WHERE PersonID = " .$UserID;
+                            $stmtDelete = $conn->prepare($sqlDelete);
+                            $stmtDelete->execute([$UserID]);
+            
+                            // Requête INSERT pour ajouter les nouveaux enregistrements dans t_persontype
+                            $sqlInsert = "INSERT INTO t_persontype (PersonID, TypeID) VALUES (?, ?)";
+                            $stmtInsert = $conn->prepare($sqlInsert);
+            
+                            if (isset($_POST["up_client"])) {
+                                $stmtInsert->execute([$UserID, "1"]);
+                            }
+                            if (isset($_POST["up_worker"])) {
+                                $stmtInsert->execute([$UserID, "2"]);
+                            }
+                        }
+                    }
+                } catch (PDOException $e) {
+                    Bootstrap_alert("danger", "Error", $e->getMessage());
+                }
+            } else {
+                Bootstrap_alert("danger", "Error", "Invalid email address");
+            }
+        }
+    }
 
+
+    ?>
     <footer>
         <script>function toggleSwitch(id) {
                 if (id === 'Client-update') {
