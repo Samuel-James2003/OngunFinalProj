@@ -97,9 +97,6 @@ function executeQuery(sqlQuery, callback) {
             }
 
             console.log('Query results:', results);
-
-            // You can process the results here
-
             connection.end((err) => {
                 if (err) {
                     console.error('Error closing MySQL connection:', err);
@@ -134,13 +131,18 @@ function addChatMessageEntry(newEntry) {
     });
 }
 
-// Function to check or create a chat link
-async function getOrCreateChat(senderId, receiverId) {
-    const connection = await mysql.createConnection(dbConfig);
+
+function getOrCreateChat(senderId, receiverId) {
+    const connection =  mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password: '',
+        database: 'bdvacances',
+    });
 
     try {
         // Check if a chat link exists for the sender and receiver
-        const [existingChat] = await connection.execute(
+        const [existingChat] = connection.execute(
             'SELECT c.ChatID FROM t_chatlink c1 JOIN t_chatlink c2 ON c1.ChatID = c2.ChatID WHERE c1.PersonID = ? AND c2.PersonID = ?',
             [senderId, receiverId]
         );
@@ -151,11 +153,11 @@ async function getOrCreateChat(senderId, receiverId) {
         }
 
         // If no chat link exists, create a new chat
-        const [result] = await connection.execute('INSERT INTO t_chat (DateCreated) VALUES (NOW())');
+        const [result] =  connection.execute('INSERT INTO t_chat (DateCreated) VALUES (NOW())');
         const chatId = result.insertId;
 
         // Link the sender and receiver to the new chat
-        await connection.execute('INSERT INTO t_chatlink (ChatID, PersonID) VALUES (?, ?), (?, ?)', [
+         connection.execute('INSERT INTO t_chatlink (ChatID, PersonID) VALUES (?, ?), (?, ?)', [
             chatId,
             senderId,
             chatId,
