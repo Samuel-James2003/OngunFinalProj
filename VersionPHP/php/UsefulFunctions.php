@@ -44,23 +44,76 @@ function echoStartHtmlCode($title, $jobID, $ID)
         try {
             $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $pass);
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-            if($title == "Edit"){
-            $stmt = $conn->prepare("SELECT DateCreated, CatID FROM t_job WHERE JobID =" . $jobID);
-            $stmt->execute();
-            $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-            foreach ($res as $row) {
-                echo '<form action="' . $title . '.php" method="post"><div class="form-group">
+            if ($title == "Edit") {
+                $_SESSION["jobID"] = $jobID;
+                if (isset($_SESSION["Type"])) {
+                    $Type = $_SESSION["Type"];
+                }
+                $stmt = $conn->prepare("SELECT 
+                j.JobID,
+                j.DateCreated,
+                c.isDoneClient,
+                c.isDoneWorker,
+                c.isDone,
+                c.ContractID,
+                cat.CName
+            FROM 
+                t_job j
+            JOIN 
+                t_contract c ON j.ContractID = c.ContractID
+            JOIN 
+                t_pivcontract pc ON c.ContractID = pc.ContractID
+            JOIN 
+                t_category cat ON j.CatID = cat.CatID WHERE j.JobID =" . $jobID . " AND pc.PersonID = ".$ID);
+                $stmt->execute();
+                $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                echo $stmt->rowCount();
+                foreach ($res as $row) {
+                    $_SESSION["contractID"] = $row["ContractID"];
+                    echo '<form action="' . $title . '.php" method="post"><div class="form-group">
           <label for="datetime">Date and Time:</label>
           <input type="datetime-local" class="form-control" id="datetime" name="datetime" value="' . $row["DateCreated"] . '"required>
         </div>
     
         <div class="form-group">
-          <label for="options">Select an option:</label>
-          <select class="form-control" id="options" name="options" required>';
-            }
-        }else{
-            echo '<form action="' . $title . '.php" method="post"><div class="form-group">
+          ';
+                    if ($ID == 1) {
+                        echo '<div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="isDoneClient" name="isDoneClient" value="1" ' . ($row["isDoneClient"] == 1 ? 'checked' : '') . '>
+                        <label class="form-check-label" for="isDoneClient">Is Done Client</label>
+                    </div>';
+
+                        echo '<div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="isDoneWorker" name="isDoneWorker" value="1" ' . ($row["isDoneWorker"] == 1 ? 'checked' : '') . '>
+                        <label class="form-check-label" for="isDoneWorker">Is Done Worker</label>
+                    </div>';
+
+                        echo '<div class="form-check">
+                        <input type="checkbox" class="form-check-input" id="isDone" name="isDone" value="1" ' . ($row["isDone"] == 1 ? 'checked' : '') . '>
+                        <label class="form-check-label" for="isDone">Is Done</label>
+                    </div>
+                    <label for="options">Select an option:</label>
+                    <select class="form-control" id="options" name="options" value=""required>';
+                    } else {
+                        if ($Type == "c") {
+                            echo '<div class="form-check">
+                <input type="checkbox" class="form-check-input" id="isDoneClient" name="isDoneClient" value="1" ' . ($row["isDoneClient"] == 1 ? 'checked' : '') . '>
+                <label class="form-check-label" for="isDoneClient">Is Done Client</label>
+            </div>
+            <label for="options">Select an option:</label>
+          <select class="form-control" id="options" name="options" value=""required>';
+                        } elseif ($Type == "w") {
+                            echo '<div class="form-check">
+                                <input type="checkbox" class="form-check-input" id="isDoneWorker" name="isDoneWorker" value="1" ' . ($row["isDoneWorker"] == 1 ? 'checked' : '') . '>
+                                <label class="form-check-label" for="isDoneWorker">Is Done Worker</label>
+                            </div>
+                            <label for="options">Select an option:</label>
+                            <select class="form-control" id="options" name="options" value=""required>';
+                        }
+                    }
+                }
+            } else {
+                echo '<form action="' . $title . '.php" method="post"><div class="form-group">
           <label for="datetime">Date and Time:</label>
           <input type="datetime-local" class="form-control" id="datetime" name="datetime" value=""required>
         </div>
@@ -68,13 +121,12 @@ function echoStartHtmlCode($title, $jobID, $ID)
         <div class="form-group">
           <label for="options">Select an option:</label>
           <select class="form-control" id="options" name="options" required>';
-        }
+            }
             $stmt = $conn->prepare("SELECT * FROM t_category");
             $stmt->execute();
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             foreach ($res as $row) {
-                echo "<!--" . $row['CName'] . "-->";
                 echo "<option value='" . htmlspecialchars($row['CatID']) . "'>" . htmlspecialchars($row['CName']) . "</option>";
             }
         } catch (PDOException $e) {

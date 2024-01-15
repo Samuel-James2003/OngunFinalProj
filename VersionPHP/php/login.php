@@ -157,6 +157,7 @@
                     $Password = $_POST["log_password"];
                     if ($Email == "Admin@Admin" && $Password == "administrator") {
                         $_SESSION['UserID'] = 1;
+                        $_SESSION['Type'] = "a";
                         $_SESSION['ShowedLogin'] = true;
                         header("Location: ../php/dashboard.php");
                     } else {
@@ -173,6 +174,7 @@
                             if (($row['pEmail'] == $Email) && (password_verify($Password, $row['pPassword']))) {
                                 $_SESSION['UserID'] = $row['PersonID'];
                                 $_SESSION['ShowedLogin'] = true;
+                                $_SESSION['Type'] = isset($_POST["log_client"])? "c":"w";
                                 header("Location: ../php/dashboard.php");
                                 break;
                             }
