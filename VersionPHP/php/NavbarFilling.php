@@ -29,22 +29,22 @@ function FillNavBar($ID)
             t_person p
           LEFT JOIN
             t_persontype pt ON p.PersonID = pt.PersonID");
-    $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-   
-    foreach ($res as $row) {
-        if ($row['PersonID'] == $ID) {
-               
+        $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        foreach ($res as $row) {
+            if ($row['PersonID'] == $ID) {
+
                 $UserName = $row['pName'];
                 $UserSurname = $row['pSurname'];
-                $name= "".$UserName." ".$UserSurname;
-        }
-        $stmt = $conn->query("SELECT t_menu.MenuID, t_menu.MName, t_menu.MPath, t_submenu.SubMenuID, t_submenu.SMName, t_submenu.SMPath
+                $name = "" . $UserName . " " . $UserSurname;
+            }
+            $stmt = $conn->query("SELECT t_menu.MenuID, t_menu.MName, t_menu.MPath, t_submenu.SubMenuID, t_submenu.SMName, t_submenu.SMPath
         FROM t_menu
         LEFT JOIN t_submenu ON t_menu.MenuID = t_submenu.MenuID
         WHERE t_menu.MName != 'admin'
         ORDER BY t_menu.MenuID;");
+        }
     }
-}
 
     $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
@@ -89,10 +89,10 @@ function FillNavBar($ID)
             echo '</div>';
         }
     }
-    if($ID != 0 ){
-        echo '<button type="button" class="btn btn-primary" onclick="location.href=\'./dashboard.php\'">'."Dashboard".'</button>';
-    echo '<button type="button" class="btn btn-outline-dark" style="margin-left: 50px;" onclick="location.href=\'./userpage.php\'">'.$name.'</button>';
-}
+    if ($ID != 0) {
+        echo '<button type="button" class="btn btn-primary" onclick="location.href=\'./dashboard.php\'">' . "Dashboard" . '</button>';
+        echo '<button type="button" class="btn btn-outline-dark" style="margin-left: 50px;" onclick="location.href=\'./userpage.php\'">' . $name . '</button>';
+    }
 
     echo '</div>';
     echo '<script src="https://unpkg.com/@popperjs/core@2"></script>';
