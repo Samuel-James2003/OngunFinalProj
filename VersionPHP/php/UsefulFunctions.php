@@ -2,6 +2,7 @@
 require "Alerts.php";
 require "ReadID.php";
 require "NavbarFilling.php";
+require "Chat.php";
 
 function ValidateEntry($password, $firstname, $surname, $address, $mail, $fileinfo, $switchclient, $switchworker)
 {

@@ -4,13 +4,26 @@
 </head>
 
 <body>
+    <!-- Two Text Boxes -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-md-6 text-box">
+                <input id="pid" autocomplete="off" type="text" class="form-control" readonly hidden>
+            <br>
+            </div>
+            <div class="col-md-6 text-box">
+                <input id="uid" autocomplete="off" type="text" class="form-control" readonly hidden>
+            <br>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="row">
             <div class="col-md-6 offset-md-3">
                 <!-- Chat box with header and body -->
                 <div class="card mt-4">
                     <div class="card-header bg-primary text-white">
-                        <h4>Sam Chat</h4>
+                        <h4>Travel Chat</h4>
                     </div>
                     <div class="card-body">
                         <!-- Chat messages list -->
@@ -22,22 +35,26 @@
                         <form>
                             <input id="msg" autocomplete="off" type="text" class="form-control"
                                 placeholder="Type your message here...">
-                                <br>
-                            <button type="submit" class="btn btn-primary">Send</button>
+                            <br>
+                            <button type="submit" class="btn btn-primary" id="send" disabled>Send</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
+    <script>
+        var userId = '<%= userId %>';
+        var personId = '<%= personId %>';
+        console.log(userId, personId);
+    </script>
     <script src="/socket.io/socket.io.js"></script>
     <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 
     <script>
-        var ran = Math.floor(100000 + Math.random() * 900000);
-        var id =  "User" + ran;
+
         $(function () {
+
             var socket = io();
             $("form").submit(function (e) {
                 const now = new Date().toLocaleString([], {
@@ -50,16 +67,25 @@
                 e.preventDefault();
                 socket.emit("chat message",
                     {
+                        id: $("uid").val(),
                         message: $("#msg").val(),
                         date: now,
-                        id: "User" + ran
                     });
                 $("#msg").val(""); // Ajout de la valeur à effacer après l'envoi
                 return false;
             });
+            socket.on("receivedData", function (receivedData) {
+                if (receivedData) {
+                    
+                    $(`#uid`).val(receivedData.id);
+                    $(`#pid`).val(receivedData.receiver);
+
+                    $(`#send`).prop("disabled", false);
+                }
+            });
+
             socket.on("chat message", function (msg) {
                 console.log("messages", msg);
-                if (msg.id == id) {
                     $("#messages").append(
                         $('<li class="list-group-item">').html(
                             `<div class="d-flex align-items-center">
@@ -69,19 +95,12 @@
                             <span class="text-muted small">${msg.date}</span></div></li>`)
                     );
                 }
-                else {
-                    $("#messages").append(
-                        $('<li class="list-group-item">').html(
-                            `<div class="d-flex align-items-center justify-content-end">
-                            <span class="text-muted small">${msg.date}</span><div class="flex-grow-1 ms-2 text-end">
-                            <p class="mb-0"><strong>${msg.id}</strong></p><p class="mb-0">${msg.message}</p></div></div>
-                            <img src="./receiver.svg" alt="Receiver" class="rounded-circle ms-2" width="40" height="40">`)
-                    );
-                }
-            });
+                
+                
+            );
         });
     </script>
-    
+
     <!-- Link to Bootstrap 5 CDN -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.1.3/js/bootstrap.bundle.min.js"></script>
 

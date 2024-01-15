@@ -23,9 +23,6 @@
         $dbname = "bdvacances";
         $username = 'root';
         $pass = '';
-        $userInput = '';
-        $error = '';
-
         $UserID = isset($_SESSION['UserID']) ? $_SESSION['UserID'] : 0;
         FillNavBar($UserID);
         ?>
