@@ -20,9 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bindParam(':jobID', $jobID);
         $stmt->execute();
 
-        $isDoneClient = $_POST["isDoneClient"];
-        $isDoneWorker = $_POST["isDoneWorker"];
-        $isDone = $_POST["isDone"];
+        $isDoneClient = isset($_POST["isDoneClient"]);
+        $isDoneWorker = isset($_POST["isDoneWorker"]);
+        $isDone = isset($_POST["isDone"]);
         $contractID = $_SESSION["contractID"];
         $sqlContract = "UPDATE t_contract SET isDoneClient = :isDoneClient, isDoneWorker = :isDoneWorker, isDone = :isDone WHERE ContractID = :contractID";
         $stmt = $conn->prepare($sqlContract);

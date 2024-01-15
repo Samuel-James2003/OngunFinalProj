@@ -67,7 +67,6 @@ function echoStartHtmlCode($title, $jobID, $ID)
                 t_category cat ON j.CatID = cat.CatID WHERE j.JobID =" . $jobID . " AND pc.PersonID = ".$ID);
                 $stmt->execute();
                 $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                echo $stmt->rowCount();
                 foreach ($res as $row) {
                     $_SESSION["contractID"] = $row["ContractID"];
                     echo '<form action="' . $title . '.php" method="post"><div class="form-group">
