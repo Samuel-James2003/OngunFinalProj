@@ -57,17 +57,11 @@
 
             var socket = io();
             $("form").submit(function (e) {
-                const now = new Date().toLocaleString([], {
-                    day: 'numeric',
-                    month: 'numeric',
-                    year: 'numeric',
-                    hour: '2-digit',
-                    minute: '2-digit',
-                });
+                const now = new Date().toISOString().slice(0, 19).replace('T', ' ');
                 e.preventDefault();
                 socket.emit("chat message",
                     {
-                        id: $("uid").val(),
+                        PersonId: $("#pid").val(),
                         message: $("#msg").val(),
                         date: now,
                     });

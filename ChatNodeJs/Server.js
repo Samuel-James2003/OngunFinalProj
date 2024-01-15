@@ -14,44 +14,58 @@ app.use(bodyParser.json());
 // Configure EJS as the view engine
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
+let ChatID;
+const dbConfig = {
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'bdvacances',
+};
 
 
-const userId = 0;
-const personId = 0;
-let isAllowed = false;
 app.post("/receiveData", (req, res) => {
     isAllowed = true;
     const data = req.body;
     console.log("Received data:", data);
     // userId = data.id;
     // personId = data.reciever;
+    getOrCreateChat(data.id, data.reciever)
+        .then((chatId) => {
+            ChatID = chatId;
+            console.log('Chat ID:', chatId);
+        })
+        .catch((error) => {
+            console.error('Error:', error);
+        });
     io.emit("receivedData", data);
     res.send("Data received successfully.");
 });
 app.get("/", (req, res) => {
-   
-        res.render("index", { userId: userId, personId: personId });
+    userId = 2;
+    personId = 2;
+    res.render("index", { userId: userId, personId: personId });
 });
 
 
 io.on("connection", (socket) => {
-        console.log("Utilisateur s'est connecté");
+    console.log("Utilisateur s'est connecté");
 
-        socket.on("disconnect", () => {
-            console.log("Utilisateur s'est déconnecté");
-        });
+    socket.on("disconnect", () => {
+        console.log("Utilisateur s'est déconnecté");
+    });
 
-        socket.on("chat message", (msg) => {
-            const newChatMessage = {
-                
-                PersonID: msg.id,
-                CMContent: msg.message, 
-                DateSent: msg.date
-              };
-              addChatMessageEntry(newChatMessage);
-            console.log("Message", msg);
-            io.emit("chat message", msg);
-        });
+    socket.on("chat message", (msg) => {
+        console.log(msg.PersonID);
+        const newChatMessage = {
+            ChatID: ChatID,
+            PersonID: msg.PersonId,
+            CMContent: msg.message,
+            DateSent: msg.date
+        };
+        addChatMessageEntry(newChatMessage);
+        console.log("Message", msg);
+        io.emit("chat message", msg);
+    });
 });
 
 server.listen(3000, () => {
@@ -106,17 +120,52 @@ function addChatMessageEntry(newEntry) {
         password: '',
         database: 'bdvacances',
     });
-  
+
     // SQL query to insert a new entry
     const sql = 'INSERT INTO t_chatmessage SET ?';
-  
+
     // Execute the query
     connection.query(sql, newEntry, (err, result) => {
-      if (err) throw err;
-      console.log('New entry added to t_chatmessage table:', result);
-  
-      // Close the MySQL connection
-      connection.end();
+        if (err) throw err;
+        console.log('New entry added to t_chatmessage table:', result);
+
+        // Close the MySQL connection
+        connection.end();
     });
-  }
+}
+
+// Function to check or create a chat link
+async function getOrCreateChat(senderId, receiverId) {
+    const connection = await mysql.createConnection(dbConfig);
+
+    try {
+        // Check if a chat link exists for the sender and receiver
+        const [existingChat] = await connection.execute(
+            'SELECT c.ChatID FROM t_chatlink c1 JOIN t_chatlink c2 ON c1.ChatID = c2.ChatID WHERE c1.PersonID = ? AND c2.PersonID = ?',
+            [senderId, receiverId]
+        );
+
+        if (existingChat.length > 0) {
+            // If a chat link exists, return the ChatID
+            return existingChat[0].ChatID;
+        }
+
+        // If no chat link exists, create a new chat
+        const [result] = await connection.execute('INSERT INTO t_chat (DateCreated) VALUES (NOW())');
+        const chatId = result.insertId;
+
+        // Link the sender and receiver to the new chat
+        await connection.execute('INSERT INTO t_chatlink (ChatID, PersonID) VALUES (?, ?), (?, ?)', [
+            chatId,
+            senderId,
+            chatId,
+            receiverId,
+        ]);
+
+        return chatId;
+    } finally {
+        // Close the connection
+        connection.end();
+    }
+}
 
