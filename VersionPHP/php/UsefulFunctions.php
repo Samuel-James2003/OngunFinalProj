@@ -49,7 +49,26 @@ function echoStartHtmlCode($title, $jobID, $ID)
                 if (isset($_SESSION["Type"])) {
                     $Type = $_SESSION["Type"];
                 }
-                $stmt = $conn->prepare("SELECT 
+                if ($ID == 1) {
+                    $stmt = $conn->prepare("SELECT 
+                    j.JobID,
+                    j.DateCreated,
+                    c.isDoneClient,
+                    c.isDoneWorker,
+                    c.isDone,
+                    c.ContractID,
+                    cat.CName
+                FROM 
+                    t_job j
+                JOIN 
+                    t_contract c ON j.ContractID = c.ContractID
+                JOIN 
+                    t_pivcontract pc ON c.ContractID = pc.ContractID
+                JOIN 
+                    t_category cat ON j.CatID = cat.CatID WHERE j.JobID =" . $jobID);
+                } else {
+
+                    $stmt = $conn->prepare("SELECT 
                 j.JobID,
                 j.DateCreated,
                 c.isDoneClient,
@@ -64,10 +83,13 @@ function echoStartHtmlCode($title, $jobID, $ID)
             JOIN 
                 t_pivcontract pc ON c.ContractID = pc.ContractID
             JOIN 
-                t_category cat ON j.CatID = cat.CatID WHERE j.JobID =" . $jobID . " AND pc.PersonID = ".$ID);
+                t_category cat ON j.CatID = cat.CatID WHERE j.JobID =" . $jobID . " AND pc.PersonID = " . $ID);
+                
+                   
+                }
                 $stmt->execute();
                 $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                echo $stmt->rowCount();
+                //echo $stmt->rowCount();
                 foreach ($res as $row) {
                     $_SESSION["contractID"] = $row["ContractID"];
                     echo '<form action="' . $title . '.php" method="post"><div class="form-group">
