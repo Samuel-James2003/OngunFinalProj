@@ -88,7 +88,6 @@ function echoStartHtmlCode($title, $jobID, $ID)
                 }
                 $stmt->execute();
                 $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                //echo $stmt->rowCount();
                 foreach ($res as $row) {
                     $_SESSION["contractID"] = $row["ContractID"];
                     echo '<form action="' . $title . '.php" method="post"><div class="form-group">
