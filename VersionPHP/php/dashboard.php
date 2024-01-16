@@ -63,8 +63,21 @@
         t_category cat ON j.CatID = cat.CatID
     WHERE 
         pc.PersonID = '" . $UserID . "';");
-            }
-            elseif($UserID == 1){
+            } elseif ($UserID == 1) {
+                echo '<div class="btn-group">';
+                echo '<button type="button" class="btn btn-primary" onclick="location.href=\'#\'"> Filter </button>';
+                echo '<button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">';
+                echo '<span class="visually-hidden">Toggle Dropdown</span>';
+                echo '</button>';
+                echo '<div class="dropdown-menu">';
+                echo '<a class="dropdown-item" href="filtereddashboard.php?query=completed"> Completed </a>';
+                echo '<a class="dropdown-item" href="filtereddashboard.php?query=notcompleted"> Not completed </a>';
+
+                echo '</div>';
+                echo '</div>';
+
+
+
                 $stmt = $conn->query("SELECT 
                 j.JobID,
                 j.DateCreated,
@@ -81,7 +94,7 @@
             JOIN 
                 t_category cat ON j.CatID = cat.CatID");
             }
-            $stmt->execute();
+
             $res = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             // Display records in the table
@@ -113,8 +126,7 @@
             } else {
                 echo "<tr><td colspan='5'>No records found</td></tr>";
             }
-
-            echo "</table>";
+        
             ?>
             <br>
         </center>

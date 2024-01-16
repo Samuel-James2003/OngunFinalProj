@@ -29,14 +29,14 @@ app.post("/receiveData", (req, res) => {
     console.log("Received data:", data);
     // userId = data.id;
     // personId = data.reciever;
-    getOrCreateChat(data.id, data.reciever)
-        .then((chatId) => {
-            ChatID = chatId;
-            console.log('Chat ID:', chatId);
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-        });
+    // getOrCreateChat(data.id, data.reciever)
+    //     .then((chatId) => {
+    //         ChatID = chatId;
+    //         console.log('Chat ID:', chatId);
+    //     })
+    //     .catch((error) => {
+    //         console.error('Error:', error);
+    //     });
     io.emit("receivedData", data);
     res.send("Data received successfully.");
 });
@@ -56,13 +56,13 @@ io.on("connection", (socket) => {
 
     socket.on("chat message", (msg) => {
         console.log(msg.PersonID);
-        const newChatMessage = {
-            ChatID: ChatID,
-            PersonID: msg.PersonId,
-            CMContent: msg.message,
-            DateSent: msg.date
-        };
-        addChatMessageEntry(newChatMessage);
+        // const newChatMessage = {
+        //     ChatID: ChatID,
+        //     PersonID: msg.PersonId,
+        //     CMContent: msg.message,
+        //     DateSent: msg.date
+        // };
+        // addChatMessageEntry(newChatMessage);
         console.log("Message", msg);
         io.emit("chat message", msg);
     });
@@ -132,42 +132,43 @@ function addChatMessageEntry(newEntry) {
 }
 
 
-function getOrCreateChat(senderId, receiverId) {
-    const connection =  mysql.createConnection({
-        host: 'localhost',
-        user: 'root',
-        password: '',
-        database: 'bdvacances',
-    });
+// function getOrCreateChat(senderId, receiverId) {
+//     const connection =  mysql.createConnection({
+//         host: 'localhost',
+//         user: 'root',
+//         password: '',
+//         database: 'bdvacances',
+//     });
 
-    try {
-        // Check if a chat link exists for the sender and receiver
-        const [existingChat] = connection.execute(
-            'SELECT c.ChatID FROM t_chatlink c1 JOIN t_chatlink c2 ON c1.ChatID = c2.ChatID WHERE c1.PersonID = ? AND c2.PersonID = ?',
-            [senderId, receiverId]
-        );
+//     try {
+//         // Check if a chat link exists for the sender and receiver
+//         const [existingChat] = connection.execute(
+//             'SELECT c.ChatID FROM t_chatlink c1 JOIN t_chatlink c2 ON c1.ChatID = c2.ChatID WHERE c1.PersonID = ? AND c2.PersonID = ?',
+//             [senderId, receiverId]
+//         );
 
-        if (existingChat.length > 0) {
-            // If a chat link exists, return the ChatID
-            return existingChat[0].ChatID;
-        }
+//         if (existingChat.length > 0) {
+//             // If a chat link exists, return the ChatID
+//             return existingChat[0].ChatID;
+//         }
 
-        // If no chat link exists, create a new chat
-        const [result] =  connection.execute('INSERT INTO t_chat (DateCreated) VALUES (NOW())');
-        const chatId = result.insertId;
+//         // If no chat link exists, create a new chat
+//         const [result] =  connection.execute('INSERT INTO t_chat (DateCreated) VALUES (NOW())');
+//         const chatId = result.insertId;
 
-        // Link the sender and receiver to the new chat
-         connection.execute('INSERT INTO t_chatlink (ChatID, PersonID) VALUES (?, ?), (?, ?)', [
-            chatId,
-            senderId,
-            chatId,
-            receiverId,
-        ]);
+//         // Link the sender and receiver to the new chat
+//          connection.execute('INSERT INTO t_chatlink (ChatID, PersonID) VALUES (?, ?), (?, ?)', [
+//             chatId,
+//             senderId,
+//             chatId,
+//             receiverId,
+//         ]);
 
-        return chatId;
-    } finally {
-        // Close the connection
-        connection.end();
-    }
-}
+//         return chatId;
+//     }
+//      finally {
+//         // Close the connection
+//         connection.end();
+//     }
+// }
 

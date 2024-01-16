@@ -90,8 +90,18 @@ function FillNavBar($ID)
         }
     }
     if ($ID != 0) {
-        echo '<button type="button" class="btn btn-primary" onclick="location.href=\'./dashboard.php\'">' . "Dashboard" . '</button>';
-        echo '<button type="button" class="btn btn-outline-dark" style="margin-left: 50px;" onclick="location.href=\'./userpage.php\'">' . $name . '</button>';
+        $userType = "Not";
+        if ($ID != 1) {
+            if (isset($_SESSION["isLoggedinAs"])) {
+                $userType = $_SESSION["isLoggedinAs"];
+            }
+        } else
+        {
+            $userType = "Admin";
+        }
+
+            echo '<button type="button" class="btn btn-primary" onclick="location.href=\'./dashboard.php\'">' . "Dashboard" . '</button>';
+        echo '<button type="button" class="btn btn-outline-dark" style="margin-left: 50px;" onclick="location.href=\'./userpage.php\'">' . $name . " is " . $userType . '</button>';
     }
 
     echo '</div>';
